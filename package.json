@@ -1,0 +1,9 @@
+{
+  "name": "pivara-hmel-static-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 5173",
+    "check": "node check-brew.mjs"
+  }
+}

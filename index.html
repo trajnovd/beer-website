@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="mk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Пивара Хмел | Craft beer, tours and tastings</title>
+    <meta
+      name="description"
+      content="Пивара Хмел is a Macedonian craft brewery presenting five bottled beers, brewery tours, tastings, brewing stories and booking contact."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-gsap="header">
+      <a class="brand-mark" href="#home" aria-label="Пивара Хмел home">
+        <img class="brand-logo" src="public/assets/brand/logo-hmel.svg" alt="" aria-hidden="true" />
+        <span>
+          <strong data-i18n="brand">Пивара Хмел</strong>
+          <small data-i18n="brandKicker">крафт пиварница</small>
+        </span>
+      </a>
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <a href="#beers" data-i18n="navBeers">Пива</a>
+        <a href="#brew" data-i18n="navBrew">Како вариме</a>
+        <a href="#visit" data-i18n="navVisit">Посета</a>
+        <a href="#blog" data-i18n="navBlog">Блог</a>
+        <a href="#contact" data-i18n="navContact">Контакт</a>
+      </nav>
+      <div class="language-switcher" aria-label="Language">
+        <button type="button" data-lang-switch="mk" aria-pressed="true">MK</button>
+        <button type="button" data-lang-switch="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <main id="main">
+      <section id="home" class="hero" aria-labelledby="hero-title">
+        <img
+          class="hero-photo"
+          src="public/assets/brand/bottle-lineup-ai.jpg"
+          alt=""
+          aria-hidden="true"
+        />
+        <canvas id="beer-canvas" class="beer-canvas" aria-label="Animated 3D lineup of the five Пивара Хмел bottles"></canvas>
+        <div class="hero-shade"></div>
+        <div class="hero-content">
+          <p class="eyebrow" data-i18n="heroEyebrow">Скопје · мала серија · пет шишиња</p>
+          <h1 id="hero-title" data-i18n="heroTitle">Пивара Хмел</h1>
+          <p class="hero-copy" data-i18n="heroCopy">
+            Пет крафт пива во стаклени шишиња, варени со отворена рецептура и доволно карактер за дегустација во пиварница.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#contact" data-i18n="heroPrimary">Резервирај дегустација</a>
+            <a class="button button-secondary" href="#beers" data-i18n="heroSecondary">Види ги шишињата</a>
+          </div>
+          <dl class="hero-stats">
+            <div>
+              <dt>5</dt>
+              <dd data-i18n="statBeers">пива</dd>
+            </div>
+            <div>
+              <dt>12-38</dt>
+              <dd>IBU</dd>
+            </div>
+            <div>
+              <dt>4.8-8.5%</dt>
+              <dd>ABV</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="range-section" aria-labelledby="range-title">
+        <div class="section-heading tight">
+          <p class="eyebrow" data-i18n="rangeEyebrow">Пале до темно</p>
+          <h2 id="range-title" data-i18n="rangeTitle">Петте шишиња на Хмел</h2>
+        </div>
+        <div id="range-strip" class="range-strip"></div>
+        <p class="range-hint" data-i18n="rangeHint">Кликни шише за целосна приказна и процес</p>
+      </section>
+
+      <section id="beers" class="section beers-section" aria-labelledby="beers-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="beersEyebrow">Каталог</p>
+            <h2 id="beers-title" data-i18n="beersTitle">Секое шише со своја страница</h2>
+            <p data-i18n="beersIntro">
+              Секое пиво има точна боја, спецификација и сопствена страница што го објаснува целиот процес на варење.
+            </p>
+          </div>
+          <div id="beer-grid" class="beer-grid"></div>
+        </div>
+      </section>
+
+      <section id="brew" class="section brew-section" aria-labelledby="brew-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="brewEyebrow">Отворена рецептура</p>
+            <h2 id="brew-title" data-i18n="brewTitle">Како вариме</h2>
+            <p data-i18n="brewIntro">
+              Го покажуваме процесот, не само готовото пиво: мелено зрно, бакарен казан, хмељ, ферментација и спецификација за секое шише.
+            </p>
+          </div>
+          <div class="process-grid">
+            <article>
+              <img src="public/assets/process/mash.jpg" alt="Mash tun with milled grain and steam" />
+              <span data-i18n="processOne">Зрното се меша во топла вода додека скробот станува сладок екстракт.</span>
+            </article>
+            <article>
+              <img src="public/assets/process/hops.jpg" alt="Hops being added to the boil" />
+              <span data-i18n="processTwo">Хмељот се додава по минутажа, па горчината и аромата се контролираат прецизно.</span>
+            </article>
+            <article>
+              <img src="public/assets/process/tanks.jpg" alt="Fermentation tanks in the brewery" />
+              <span data-i18n="processThree">Ферментацијата добива време: лагерирање за чистина, топла квасна работа за белгиските пива.</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section about-section" aria-labelledby="about-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="aboutEyebrow">Луѓе и место</p>
+            <h2 id="about-title" data-i18n="aboutTitle">Мала пиварница со точна рака</h2>
+            <p data-i18n="aboutIntro">
+              Хмел е измислена студентска крафт-пиварница од Скопје: доволно мала за да се гледа секој казан, доволно сериозна за секое шише да има бројки.
+            </p>
+          </div>
+          <div class="team-grid">
+            <article>
+              <strong data-i18n="teamOneName">Ана Стојановска</strong>
+              <span data-i18n="teamOneRole">Главен пивар</span>
+              <p data-i18n="teamOneBio">Го води рецептурниот лист и го чува балансот помеѓу чист лагер и богати белгиски квасци.</p>
+            </article>
+            <article>
+              <strong data-i18n="teamTwoName">Мартин Илиев</strong>
+              <span data-i18n="teamTwoRole">Пиварница и процес</span>
+              <p data-i18n="teamTwoBio">Ги следи температурите, ферментацијата и чистењето, затоа турите секогаш имаат реална приказна.</p>
+            </article>
+            <article>
+              <strong data-i18n="teamThreeName">Елена Петрова</strong>
+              <span data-i18n="teamThreeRole">Дегустации</span>
+              <p data-i18n="teamThreeBio">Ги води посетителите низ петте шишиња, од Зрно до Корен, со храна и точна температура.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="visit" class="section visit-section" aria-labelledby="visit-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="visitEyebrow">Посета</p>
+            <h2 id="visit-title" data-i18n="visitTitle">Тури и дегустации</h2>
+            <p data-i18n="visitIntro">
+              Веб-страницата не продава онлајн. Таа ве носи до пиварницата, каде шишињата се отвораат по ред.
+            </p>
+          </div>
+          <div id="service-grid" class="service-grid"></div>
+        </div>
+      </section>
+
+      <section id="faq" class="section faq-section" aria-labelledby="faq-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="faqEyebrow">Пред да дојдете</p>
+            <h2 id="faq-title" data-i18n="faqTitle">Чести прашања</h2>
+          </div>
+          <div id="faq-list" class="faq-list"></div>
+        </div>
+      </section>
+
+      <section id="blog" class="section blog-section" aria-labelledby="blog-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="blogEyebrow">Новости и процес</p>
+            <h2 id="blog-title" data-i18n="blogTitle">Белешки од казанот</h2>
+          </div>
+          <div id="blog-grid" class="blog-grid"></div>
+        </div>
+      </section>
+
+      <section id="contact" class="section contact-section" aria-labelledby="contact-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="contactEyebrow">Резервација</p>
+            <h2 id="contact-title" data-i18n="contactTitle">Побарај термин</h2>
+            <p data-i18n="contactIntro">
+              Испратете барање за дегустација или тура. Формата користи mailto fallback за статичен хостинг.
+            </p>
+          </div>
+          <div class="contact-layout">
+            <form id="booking-form" class="booking-form" action="mailto:tastings@pivarahmel.mk" method="post" enctype="text/plain">
+              <label>
+                <span data-i18n="formName">Име</span>
+                <input name="name" autocomplete="name" required />
+              </label>
+              <label>
+                <span data-i18n="formEmail">Е-пошта</span>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label>
+                <span data-i18n="formDate">Датум</span>
+                <input type="date" name="date" required />
+              </label>
+              <label>
+                <span data-i18n="formGroup">Група</span>
+                <input type="number" name="group_size" min="1" max="40" value="4" required />
+              </label>
+              <label class="full">
+                <span data-i18n="formMessage">Порака</span>
+                <textarea name="message" rows="5" data-i18n-placeholder="formPlaceholder" placeholder="Кажете ни кој пакет ве интересира."></textarea>
+              </label>
+              <input class="honeypot" type="text" name="company" tabindex="-1" autocomplete="off" />
+              <button class="button button-primary full" type="submit" data-i18n="formSubmit">Испрати барање</button>
+              <p id="form-status" class="form-status" role="status"></p>
+            </form>
+            <aside class="contact-info">
+              <h3 data-i18n="infoTitle">Контакт информации</h3>
+              <p><strong data-i18n="infoAddressLabel">Адреса</strong><br />ул. Индустриска 12, Скопје</p>
+              <p><strong data-i18n="infoHoursLabel">Работно време</strong><br /><span data-i18n="infoHours">Сре-пет 16:00-22:00 · Саб 12:00-22:00</span></p>
+              <p><strong>Телефон</strong><br />+389 70 555 214</p>
+              <p><strong>Email</strong><br />tastings@pivarahmel.mk</p>
+              <iframe
+                title="Map to Пивара Хмел"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=21.415%2C41.987%2C21.445%2C42.007&amp;layer=mapnik"
+                loading="lazy"
+              ></iframe>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong data-i18n="brand">Пивара Хмел</strong>
+        <p data-i18n="footerCopy">Крафт пиварница за тури, дегустации и пет шишиња со вистински пиварски податоци.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <a href="#beers" data-i18n="navBeers">Пива</a>
+        <a href="#visit" data-i18n="navVisit">Посета</a>
+        <a href="#contact" data-i18n="navContact">Контакт</a>
+      </nav>
+      <div class="socials">
+        <a href="https://www.instagram.com/" rel="noreferrer" target="_blank">Instagram</a>
+        <a href="https://www.facebook.com/" rel="noreferrer" target="_blank">Facebook</a>
+      </div>
+    </footer>
+
+    <div id="cookie-banner" class="cookie-banner" role="region" aria-label="Cookie notice" hidden>
+      <p data-i18n="cookieText">Користиме основно cookie за да ја запомниме согласноста и јазикот.</p>
+      <button class="button button-primary" type="button" data-cookie-accept data-i18n="cookieAccept">Прифати</button>
+    </div>
+
+    <script src="public/vendor/three.min.js"></script>
+    <script src="public/vendor/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Pivara Hmel logo</title>
+  <desc id="desc">A copper and gold craft brewery mark combining a bottle, hop cone, and the letter H.</desc>
+  <rect x="5" y="5" width="86" height="86" rx="18" fill="#1F1611"/>
+  <rect x="5" y="5" width="86" height="86" rx="18" stroke="#E0A53D" stroke-width="2"/>
+  <path d="M43 15h10v11l5 8v45H38V34l5-8V15Z" fill="#2A1E16" stroke="#C8761B" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M39 48h18v23H39V48Z" fill="#F3EBDD" stroke="#9C5A2C" stroke-width="2"/>
+  <path d="M34 39c8-13 20-13 28 0" stroke="#E0A53D" stroke-width="3" stroke-linecap="round"/>
+  <path d="M35 28c-6 3-10 8-12 15 7 1 13-2 17-8 2-3 1-6-5-7Z" fill="#6B7A4A" stroke="#E0A53D" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M61 28c6 3 10 8 12 15-7 1-13-2-17-8-2-3-1-6 5-7Z" fill="#6B7A4A" stroke="#E0A53D" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M43 54v12M53 54v12M43 60h10" stroke="#1F1611" stroke-width="4" stroke-linecap="round"/>
+  <path d="M31 78h34" stroke="#E0A53D" stroke-width="3" stroke-linecap="round"/>
+</svg>
