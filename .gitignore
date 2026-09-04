@@ -6,3 +6,6 @@ node_modules/
 
 # Full-resolution image sources live outside the repo
 _originals/
+
+# Generated production output
+dist/

@@ -1,59 +1,36 @@
-# beer-website
+# Hmel — Independent Craft Brewery
 
-Presentation site for **Пивара Хмел**, a small-batch craft brewery in Skopje —
-five bottled beers, brewery tours and tastings. Static HTML, CSS and vanilla
-JavaScript, bilingual (Macedonian / English), no build step.
+A complete multi-page redesign of the fictional **Пивара Хмел** student brewery project. Eleven pre-rendered pages, Macedonian and English, light and dark themes, and interactive Three.js product scenes.
 
-Built for the FCSE *Business Practice 2025/2026* project assignment.
-
-## Run it
-
-```bash
-npm run dev          # serves on http://localhost:5173
+```sh
+npm run build  # generates the HTML pages and dist/ production directory
+npm run dev    # local server, http://localhost:5173
+npm run check  # recipe invariants and page integrity
 ```
 
-Any static file server works — there is nothing to compile.
+The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google Fonts with system fallbacks. There are no runtime npm dependencies. All primary content and navigation are pre-rendered and remain accessible without JavaScript. Run the build after editing templates or data.
 
-## Check the brewing data
+## Pages
 
-```bash
-npm run check
-```
+- `index.html`: editorial homepage and interactive 3D bottle
+- `beers.html`: complete five-beer collection
+- `brewery.html`: story, brewing values, and team
+- `process.html`: recipe-driven scrolling brewing visualization
+- `journal.html`: expandable brewing stories
+- `visit.html`: experiences, contact details, FAQs, and email request preparation
+- `pivo/{zrno,magla,kaluger,opat,koren}.html`: individual beer pages with interactive bottles, specifications, and keyboard-accessible brewing tabs
 
-Verifies the brew-sheet maths behind the beer-page animation across all five
-recipes in both languages: liquid level never falls, colour never walks
-backwards, the boil is the hottest stage, and every derived final gravity lands
-between 1.000 and its original gravity.
+## Source
 
-## Layout
+- `data.js`: original bilingual recipes, experiences, articles, and FAQs; brewing calculations
+- `templates.js`: bilingual HTML templates shared by the static build and client language switch
+- `styles.css`: responsive layouts, both themes, transitions, reduced-motion support
+- `app.js`: themes, language, navigation, brewing controls, request preparation, and animation lifecycle
+- `scene.js`: Three.js bottle geometry, branded label textures, studio lighting, drag/keyboard rotation, and resource cleanup
+- `build.mjs`: generates all 11 pages and stages public production assets
+- `public/assets/`: original brewery photography and identity
+- `.openai/hosting.json`: private Sites hosting configuration
 
-```
-index.html              one-page site: beers, brewing, team, visit, FAQ, blog, contact
-pivo/<slug>.html        one page per beer; the body is injected from app.js
-app.js                  all content + rendering: beers, services, FAQ, posts, i18n
-styles.css              design tokens and every component
-public/assets/          photography (JPEG, sized for display)
-public/vendor/          GSAP and Three.js, vendored so the site works offline
-check-brew.mjs          assertions for the brewing model
-```
+Preferences are stored locally on the visitor’s device. Themes initially follow the system setting. Motion follows the system reduced-motion preference, with a separate footer pause control. WebGL failures retain a photographic fallback; scenes stop rendering when outside the viewport or when the tab is hidden.
 
-## How the beer pages work
-
-`app.js` holds one `beers` array. A beer page sets `<body data-beer="slug">` and
-everything on it — hero, spec sheet, five brewing steps, prev/next — is rendered
-from that entry, so each beer's copy lives in exactly one place.
-
-The scroll animation beside the brewing steps is a **sight glass**, the level
-tube on a real brewhouse tank. It is driven entirely by data already in the
-recipe: liquid colour walks the standard SRM chart from pale wort to the beer's
-measured SRM, final gravity is derived from OG and ABV, and fermentation
-temperature comes from the yeast each recipe names. A pale lager barely shifts
-colour; the porter runs almost black.
-
-## Notes
-
-- Content is visible without JavaScript. `.reveal` only hides behind
-  `html[data-motion="on"]`, which JS sets, so a crawler or a failed script still
-  sees every section.
-- `prefers-reduced-motion` disables the bubbles, the boil and all reveals.
-- Full-resolution PNG sources for the photography are kept outside this repo.
+The brewery and its contact details are fictional. The visit form validates the request and shows a review before offering a mailto link. It does not submit to a backend, send email automatically, or confirm a booking.

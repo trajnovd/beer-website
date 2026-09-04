@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 5173",
-    "check": "node check-brew.mjs"
+    "check": "node check-brew.mjs && node check-site.mjs",
+    "build": "node build.mjs"
   }
 }
