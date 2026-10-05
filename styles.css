@@ -2508,3 +2508,30 @@ summary {
 #form-status p + p {
   margin-top: 10px;
 }
+.visit-map {
+  margin: 35px 0 0;
+}
+.visit-map iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+}
+.visit-map figcaption {
+  margin-top: 6px;
+}
+.footer-top > div > .footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 6px;
+  color: var(--ink);
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-social svg {
+  width: 18px;
+}

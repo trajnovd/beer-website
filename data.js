@@ -1,6 +1,11 @@
 /* Booking form: paste the Web3Forms access key here (https://web3forms.com).
    The key is meant to be public. While it is empty the form says it is not connected. */
 const WEB3FORMS_ACCESS_KEY = "";
+/* Footer social links. Placeholder handles: the brewery is fictional and the PRD names none. */
+const SOCIAL_LINKS = [
+  ["Instagram", "https://www.instagram.com/pivarahmel/"],
+  ["Facebook", "https://www.facebook.com/pivarahmel"],
+];
 
 const beers = [
   {
@@ -598,6 +603,7 @@ function brewStages(beer) {
 if (typeof module !== "undefined")
   module.exports = {
     WEB3FORMS_ACCESS_KEY,
+    SOCIAL_LINKS,
     beers,
     services,
     posts,
