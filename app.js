@@ -73,8 +73,11 @@
     document.addEventListener("keydown", key);
     const reduce = matchMedia("(prefers-reduced-motion: reduce)");
     let observer;
+    // Only animate what this page has; GSAP warns on selectors that match nothing.
+    const intro = (selector, vars) =>
+      document.querySelector(selector) && gsap.from(selector, vars);
     if (!reduce.matches && saved("hmel-motion") !== "paused" && window.gsap) {
-      gsap.from(".hero-title>span,.page-intro h1", {
+      intro(".hero-title>span,.page-intro h1", {
         y: 65,
         opacity: 0,
         duration: 1.15,
@@ -82,7 +85,7 @@
         ease: "power3.out",
         clearProps: "all",
       });
-      gsap.from(".hero-topline,.hero-description,.hero-feature", {
+      intro(".hero-topline,.hero-description,.hero-feature", {
         y: 20,
         opacity: 0,
         duration: 0.9,

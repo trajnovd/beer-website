@@ -49,8 +49,8 @@ for (const [page, slug] of routes) {
     assert.ok(description && !descriptions.has(description), `${file}: own meta description`);
     descriptions.add(description);
     assert.ok(built.includes('property="og:title"'), `${file}: link-preview tags`);
-    for (const m of built.matchAll(/(?:href|src)="([^"]+)"/g)) {
-      const href = m[1];
+    for (const m of built.matchAll(/(?:href|src)="([^"]+)"|import .+? from "([^"]+)"/g)) {
+      const href = m[1] || m[2];
       if (/^(https?:|mailto:|tel:)/.test(href)) continue;
       const [base, hash] = href.split("#");
       const target = base.split("?")[0];
