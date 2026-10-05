@@ -1268,37 +1268,18 @@ small {
 }
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 35px;
 }
 .team-portrait {
   aspect-ratio: 4 / 5;
   background: var(--surface);
 }
-.team-avatar {
-  display: flex;
-  align-items: flex-end;
-  padding: 22px 24px;
-  background: var(--beer);
-  color: #1c241c;
-  font-family: var(--display);
-  font-size: clamp(90px, 9vw, 150px);
-  font-weight: 800;
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-}
-.team-avatar.is-dark {
-  color: #f4f4ee;
-}
-.team-card .eyebrow {
-  font-size: 12px;
-  margin: 30px 0 15px;
-}
 .team-card h3 {
   font-family: var(--display);
   font-size: 37px;
   text-transform: uppercase;
-  margin-bottom: 20px;
+  margin: 30px 0 20px;
 }
 .team-card > p:last-child {
   font-size: 14px;
@@ -1965,6 +1946,9 @@ textarea {
   .recipe-image {
     height: 350px;
   }
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .detail-watermark {
     font-size: 380px;
   }
@@ -2012,9 +1996,6 @@ textarea {
   .team-grid {
     grid-template-columns: 1fr;
     gap: 35px;
-  }
-  .team-card .eyebrow {
-    margin-top: 20px;
   }
   .team-card h3 {
     font-size: 35px;

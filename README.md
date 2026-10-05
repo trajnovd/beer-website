@@ -36,9 +36,9 @@ The cookie notice is in every page's HTML; accepting it sets one `hmel-consent` 
 
 The brewery and its contact details are fictional.
 
-## Add team photos
+## Change a team photo
 
-Each team card shows initials on a beer colour until a photo exists. Save a portrait (4:5, about 800×1000) as `public/assets/team/<id>.jpg`, using the `id` from `team` in `data.js` (for example `ana-stojanovska.jpg`), then run `npm run build`. The photo replaces the avatar; no code changes.
+Each card on the brewery page reads its photo from `public/assets/team/<id>.webp`, using the `id` from `team` in `data.js`. Replace the file with a 600×750 (4:5) webp and run `npm run build`.
 
 ## Connect the booking form
 

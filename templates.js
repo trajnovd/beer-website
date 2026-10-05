@@ -1,6 +1,4 @@
 /* Page templates, rendered at build time into one static file per page and language. */
-const fs = require("fs");
-const path = require("path");
 const D = require("./data.js");
 const words = (mk, en, lang) => (lang === "mk" ? mk : en);
 const icons = {
@@ -104,15 +102,11 @@ function renderPage(page = "home", lang = "mk", slug = "") {
       )
       .join(
         "",
-      )}</section><section class="section"><div class="section-heading"><div>${label("03", w("Тимот", "Our people"))}<h2 class="display reveal">${w("РАЦЕ ШТО ВАРАТ.<br>ЛУЃЕ ШТО САКААТ.", "HANDS THAT BREW.<br>PEOPLE WHO CARE.")}</h2></div></div><div class="team-grid">${D.team
-      .map((m) => {
-        const photo = fs.existsSync(path.join(__dirname, "public/assets/team", m.id + ".jpg")),
-          beer = D.beers.find((x) => x.slug === m.beer);
-        const portrait = photo
-          ? `<div class="team-portrait">${image("team/" + m.id + ".jpg", m.name[lang])}</div>`
-          : `<div class="team-portrait team-avatar${beer.srm > 10 ? " is-dark" : ""}" style="--beer:${beer.color}" aria-hidden="true">${m.name[lang].split(" ").map((part) => part[0]).join("")}</div>`;
-        return `<article class="team-card reveal">${portrait}<p class="eyebrow">${m.role[lang]}</p><h3>${m.name[lang]}</h3><p>${m.bio[lang]}</p></article>`;
-      })
+      )}</section><section class="section"><div class="section-heading"><div>${label("03", w("Тимот зад сајтот", "The team behind the site"))}<h2 class="display reveal">${w("ЧЕТИРИ ПАРА РАЦЕ.<br>ЕДЕН САЈТ.", "FOUR PAIRS OF HANDS.<br>ONE SITE.")}</h2></div></div><div class="team-grid">${D.team
+      .map(
+        (m) =>
+          `<article class="team-card reveal"><div class="team-portrait">${image("team/" + m.id + ".webp", m.role[lang])}</div><h3>${m.role[lang]}</h3><p>${m.bio[lang]}</p></article>`,
+      )
       .join("")}</div></section>${cta()}`;
   if (page === "process")
     content = `${intro("03", w("Од зрно до чаша", "From grain to glass"), w("ВРЕДИ<br><em>ДА СЕ ЧЕКА.</em>", "WORTH<br><em>THE WAIT.</em>"), w("Пет чекори. Без кратенки. Следи го патувањето на Зрно, нашиот пале лагер, од првото мелење до ладната чаша.", "Five stages. No shortcuts. Follow Zrno, our pale lager, from the first milling to the cold glass."))}<section class="section process-experience"><div class="brew-readout"><div class="readout-top"><span>${w("ЛИСТ ЗА ВАРЕЊЕ", "BREW SHEET")}</span><span>01 / ZRNO</span></div><div class="readout-visual"><div class="sight-glass"><div class="liquid"><div class="liquid-surface"></div></div><div class="glass-grid"></div></div><div class="readout-scale"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div><div class="readout-caption"><span class="readout-stage">01</span><h2 class="readout-name">${D.beers[0].brewing[0].title[lang]}</h2></div></div><div class="readout-metrics"><div><span>${w("ТЕМПЕРАТУРА", "TEMPERATURE")}</span><strong data-reading="temp">18°C</strong></div><div><span>${w("ГУСТИНА", "GRAVITY")}</span><strong data-reading="gravity">—</strong></div><div><span>${w("ВРЕМЕ", "TIME")}</span><strong data-reading="clock">−00:20</strong></div></div><p class="readout-detail">${D.beers[0].malt}</p><small>${w("Илустративен приказ според рецептот", "Illustrative visualization based on the recipe")}</small></div><div class="process-story">${D.beers[0].brewing.map((step, i) => `<article class="process-chapter" data-stage="${i}"><span class="chapter-number">0${i + 1}</span><h2>${step.title[lang]}</h2><p>${step.body[lang]}</p><div class="chapter-image reveal">${image(step.img.replace("public/assets/", ""), step.title[lang])}</div></article>`).join("")}</div></section><section class="recipe-callout section">${label("05", w("Љубопитен за повеќе?", "Curious for more?"))}<h2 class="display">${w("ПЕТ ПИВА.<br>ПЕТ ПАТУВАЊА.", "FIVE BEERS.<br>FIVE JOURNEYS.")}</h2><p>${w("Секое пиво има свој слад, свој квасец и свое време. Истражи ги рецептите.", "Every beer has its own malt, its own yeast, its own rhythm. Explore the recipes.")}</p>${link("beers.html", w("Откриј ги рецептите", "Explore the recipes"), "button button-accent")}</section>`;

@@ -409,36 +409,38 @@ const services = [
   },
 ];
 
-/* Initials avatars use the beer colour; a photo at public/assets/team/<id>.jpg replaces them. */
+/* The student team that built the site; the photo is public/assets/team/<id>.webp. */
 const team = [
   {
-    id: "ana-stojanovska",
-    beer: "zrno",
-    name: { mk: "Ана Стојановска", en: "Ana Stojanovska" },
-    role: { mk: "Главен пивар", en: "Head brewer" },
+    id: "headshot-1",
+    role: { mk: "UI и визуелен дизајн", en: "UI and visual design" },
     bio: {
-      mk: "Рецептите, балансот и сите мали детали што го прават пивото наше.",
-      en: "The recipes, the balance, and all the little details that make the beer ours.",
+      mk: "Дизајн системот, фонтовите, лентата со пивата и изгледот на секој екран.",
+      en: "The design system, the type, the Range strip and the layout on every screen.",
     },
   },
   {
-    id: "martin-iliev",
-    beer: "opat",
-    name: { mk: "Мартин Илиев", en: "Martin Iliev" },
-    role: { mk: "Пиварница и процес", en: "Brewery & process" },
+    id: "headshot-2",
+    role: { mk: "Фронтенд развој", en: "Front-end development" },
     bio: {
-      mk: "Температури, ферментација и трпение. Секој казан е во добри раце.",
-      en: "Temperatures, fermentation, and patience. Every kettle is in good hands.",
+      mk: "Страниците за пивата, 3D шишето, шаблоните и двата јазика.",
+      en: "The beer pages, the 3D bottle, the page templates and both languages.",
     },
   },
   {
-    id: "elena-petrova",
-    beer: "magla",
-    name: { mk: "Елена Петрова", en: "Elena Petrova" },
-    role: { mk: "Дегустации", en: "Tastings & hospitality" },
+    id: "headshot-3",
+    role: { mk: "Бекенд и објавување", en: "Back-end and deployment" },
     bio: {
-      mk: "Твојот водич низ петте шишиња — и приказните што доаѓаат со нив.",
-      en: "Your guide to the five bottles — and the stories that come with them.",
+      mk: "Градењето на страниците, формуларот за посета, Docker и објавувањето.",
+      en: "The page build, the visit form, Docker and getting the site online.",
+    },
+  },
+  {
+    id: "headshot-4",
+    role: { mk: "Содржина и тестирање", en: "Content and testing" },
+    bio: {
+      mk: "Текстовите на двата јазика, дневникот, пристапноста и проверките на сајтот.",
+      en: "The copy in both languages, the journal, accessibility and the site checks.",
     },
   },
 ];
