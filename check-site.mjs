@@ -16,6 +16,7 @@ const routes = [
   ...beers.map((b) => ["beer", b.slug]),
 ];
 let links = 0;
+const descriptions = new Set();
 for (const [page, slug] of routes) {
   for (const lang of ["mk", "en"]) {
     const file = (lang === "en" ? "en/" : "") + pageFile(page, slug);
@@ -44,6 +45,10 @@ for (const [page, slug] of routes) {
       `${file}: hreflang alternates`,
     );
     assert.ok(built.includes("scene.js"), `${file}: scene module included`);
+    const description = built.match(/<meta name="description" content="([^"]+)">/)?.[1];
+    assert.ok(description && !descriptions.has(description), `${file}: own meta description`);
+    descriptions.add(description);
+    assert.ok(built.includes('property="og:title"'), `${file}: link-preview tags`);
     for (const m of built.matchAll(/(?:href|src)="([^"]+)"/g)) {
       const href = m[1];
       if (/^(https?:|mailto:|tel:)/.test(href)) continue;

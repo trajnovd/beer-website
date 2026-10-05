@@ -23,6 +23,37 @@ const titles = {
   visit: ["Посети нè", "Visit us"],
   cookies: ["Колачиња", "Cookies"],
 };
+const descriptions = {
+  home: [
+    "Хмел е независна пиварница од Скопје. Пет пива со отворени рецепти, од свеж лагер до темен портер, и дегустации во пиварницата.",
+    "Hmel is an independent brewery in Skopje. Five beers with open recipes, from a crisp lager to a dark porter, plus tastings at the brewery.",
+  ],
+  beers: [
+    "Сите пет пива на Хмел: Зрно, Магла, Калуѓер, Опат и Корен. Стил, јачина и карактер на секое шише.",
+    "All five Hmel beers: Zrno, Magla, Kaluǵer, Opat and Koren. The style, strength and character of every bottle.",
+  ],
+  brewery: [
+    "Луѓето и вредностите зад Хмел: добри состојки, време за ферментација и отворени рецепти.",
+    "The people and values behind Hmel: good ingredients, time to ferment and open recipes.",
+  ],
+  process: [
+    "Од зрно до чаша во пет чекори: мелење, замешување, варење, ферментација и зреење на Зрно, нашиот светол лагер.",
+    "From grain to glass in five stages: milling, mashing, boiling, fermenting and conditioning Zrno, our pale lager.",
+  ],
+  journal: [
+    "Белешки од пиварницата: зошто Калуѓер завршува суво, како квасецот ја гради Магла и како да дегустираш пет пива по ред.",
+    "Notes from the brewery: why Kaluǵer finishes dry, how yeast builds Magla, and how to taste five beers in order.",
+  ],
+  visit: [
+    "Дегустации, тури низ пиварницата и приватни групи во Скопје. Цени, работно време, мапа и формулар за барање посета.",
+    "Tastings, brewery tours and private groups in Skopje. Prices, opening hours, a map and a form to request a visit.",
+  ],
+  cookies: [
+    "Што зачувува страницата на Хмел на твојот уред и зошто. Едно колаче, без следење и реклами.",
+    "What the Hmel site stores on your device and why. One cookie, no tracking, no ads.",
+  ],
+};
+const attr = (text) => text.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
 const write = (file, html) => {
   for (const out of [file, "dist/" + file]) {
     fs.mkdirSync(path.dirname(out), { recursive: true });
@@ -35,12 +66,25 @@ for (const [page, slug = ""] of routes) {
   for (const lang of ["mk", "en"]) {
     const root = siteRootFor(page, lang),
       i = lang === "mk" ? 0 : 1;
-    const title =
-      (slug ? beers.find((b) => b.slug === slug).name[lang] : titles[page][i]) +
-      " — " +
-      ["Пивара Хмел", "Pivara Hmel"][i];
+    const beer = beers.find((b) => b.slug === slug),
+      site = ["Пивара Хмел", "Pivara Hmel"][i];
+    const title = (beer ? beer.name[lang] : titles[page][i]) + " — " + site;
+    const description = beer
+      ? `${beer.name[lang]}: ${beer.style[lang]}, ${beer.abv} ABV. ${beer.note[lang]}`
+      : descriptions[page][i];
+    // og:image needs an absolute URL, so it waits until the site has its public address.
+    const preview = [
+      ["og:type", "website"],
+      ["og:site_name", site],
+      ["og:title", title],
+      ["og:description", description],
+      ["og:locale", lang === "mk" ? "mk_MK" : "en_US"],
+      ["og:locale:alternate", lang === "mk" ? "en_US" : "mk_MK"],
+    ]
+      .map(([p, v]) => `<meta property="${p}" content="${attr(v)}">`)
+      .join("");
     const html = `<!doctype html>
-<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141a15"><title>${title}</title><meta name="description" content="Пет пива од Скопје, секое со свој карактер. Откриј ги пивата, пиварницата и дегустациите на Хмел."><link rel="alternate" hreflang="mk" href="${root}${file}"><link rel="alternate" hreflang="en" href="${root}en/${file}"><link rel="alternate" hreflang="x-default" href="${root}${file}"><link rel="icon" href="${root}public/assets/brand/logo-hmel.svg" type="image/svg+xml"><script>try{document.documentElement.dataset.theme=localStorage.getItem('hmel-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}try{if(/(^|; )hmel-consent=1/.test(document.cookie))document.documentElement.dataset.consent='1'}catch(e){}</script><link rel="stylesheet" href="${root}styles.css"><script src="${root}public/vendor/gsap.min.js" defer></script><script src="${root}public/vendor/three.min.js" defer></script><script src="${root}data.js" defer></script><script src="${root}scene.js" defer></script><script src="${root}app.js" defer></script></head><body data-page="${page}" ${slug ? `data-beer="${slug}"` : ""}>${renderPage(page, lang, slug)}</body></html>`;
+<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141a15"><title>${title}</title><meta name="description" content="${attr(description)}">${preview}<meta name="twitter:card" content="summary"><link rel="alternate" hreflang="mk" href="${root}${file}"><link rel="alternate" hreflang="en" href="${root}en/${file}"><link rel="alternate" hreflang="x-default" href="${root}${file}"><link rel="icon" href="${root}public/assets/brand/logo-hmel.svg" type="image/svg+xml"><script>try{document.documentElement.dataset.theme=localStorage.getItem('hmel-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}try{if(/(^|; )hmel-consent=1/.test(document.cookie))document.documentElement.dataset.consent='1'}catch(e){}</script><link rel="stylesheet" href="${root}styles.css"><script src="${root}public/vendor/gsap.min.js" defer></script><script src="${root}public/vendor/three.min.js" defer></script><script src="${root}data.js" defer></script><script src="${root}scene.js" defer></script><script src="${root}app.js" defer></script></head><body data-page="${page}" ${slug ? `data-beer="${slug}"` : ""}>${renderPage(page, lang, slug)}</body></html>`;
     write(lang === "en" ? "en/" + file : file, html);
     count++;
   }
