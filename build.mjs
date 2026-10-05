@@ -53,6 +53,8 @@ const descriptions = {
     "What the Hmel site stores on your device and why. One cookie, no tracking, no ads.",
   ],
 };
+// The public RepoRun address; link previews and search engines need absolute URLs.
+const SITE_URL = "https://team-54--delovna2526.reporun.finki.net.mk/";
 const attr = (text) => text.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
 const write = (file, html) => {
   for (const out of [file, "dist/" + file]) {
@@ -72,9 +74,13 @@ for (const [page, slug = ""] of routes) {
     const description = beer
       ? `${beer.name[lang]}: ${beer.style[lang]}, ${beer.abv} ABV. ${beer.note[lang]}`
       : descriptions[page][i];
-    // og:image needs an absolute URL, so it waits until the site has its public address.
+    const url = (l) => SITE_URL + (l === "en" ? "en/" : "") + (file === "index.html" ? "" : file);
     const preview = [
       ["og:type", "website"],
+      ["og:url", url(lang)],
+      ["og:image", SITE_URL + "public/assets/brand/bottle-lineup-ai.jpg"],
+      ["og:image:width", "1672"],
+      ["og:image:height", "941"],
       ["og:site_name", site],
       ["og:title", title],
       ["og:description", description],
@@ -86,7 +92,7 @@ for (const [page, slug = ""] of routes) {
     // Three.js loads as an ES module (the classic build warns on every page); module scripts run
     // in document order with the deferred scripts, so window.THREE is set before app.js boots.
     const html = `<!doctype html>
-<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141a15"><title>${title}</title><meta name="description" content="${attr(description)}">${preview}<meta name="twitter:card" content="summary"><link rel="alternate" hreflang="mk" href="${root}${file}"><link rel="alternate" hreflang="en" href="${root}en/${file}"><link rel="alternate" hreflang="x-default" href="${root}${file}"><link rel="icon" href="${root}public/assets/brand/logo-hmel.svg" type="image/svg+xml"><script>try{document.documentElement.dataset.theme=localStorage.getItem('hmel-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}try{if(/(^|; )hmel-consent=1/.test(document.cookie))document.documentElement.dataset.consent='1'}catch(e){}</script><link rel="stylesheet" href="${root}styles.css"><script src="${root}public/vendor/gsap.min.js" defer></script><script type="module">import * as THREE from "${root || "./"}public/vendor/three.module.min.js";window.THREE=THREE;</script><script src="${root}data.js" defer></script><script src="${root}scene.js" defer></script><script src="${root}app.js" defer></script></head><body data-page="${page}" ${slug ? `data-beer="${slug}"` : ""}>${renderPage(page, lang, slug)}</body></html>`;
+<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141a15"><title>${title}</title><meta name="description" content="${attr(description)}">${preview}<meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="${url(lang)}"><link rel="alternate" hreflang="mk" href="${url("mk")}"><link rel="alternate" hreflang="en" href="${url("en")}"><link rel="alternate" hreflang="x-default" href="${url("mk")}"><link rel="icon" href="${root}public/assets/brand/logo-hmel.svg" type="image/svg+xml"><script>try{document.documentElement.dataset.theme=localStorage.getItem('hmel-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}try{if(/(^|; )hmel-consent=1/.test(document.cookie))document.documentElement.dataset.consent='1'}catch(e){}</script><link rel="stylesheet" href="${root}styles.css"><script src="${root}public/vendor/gsap.min.js" defer></script><script type="module">import * as THREE from "${root || "./"}public/vendor/three.module.min.js";window.THREE=THREE;</script><script src="${root}data.js" defer></script><script src="${root}scene.js" defer></script><script src="${root}app.js" defer></script></head><body data-page="${page}" ${slug ? `data-beer="${slug}"` : ""}>${renderPage(page, lang, slug)}</body></html>`;
     write(lang === "en" ? "en/" + file : file, html);
     count++;
   }
