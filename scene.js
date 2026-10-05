@@ -2,6 +2,9 @@
 function createHmelBottle(canvas, beer, motionQuery) {
   if (!window.THREE) return () => {};
   const T = window.THREE;
+  // Vendored Three.js r150 uses encoding (not the later colorSpace API).
+  // Interpret CSS/hex colours as sRGB before lighting them in linear space.
+  T.ColorManagement.enabled = true;
   let renderer;
   try {
     renderer = new T.WebGLRenderer({
@@ -14,9 +17,9 @@ function createHmelBottle(canvas, beer, motionQuery) {
     return () => {};
   }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
-  renderer.outputColorSpace = T.SRGBColorSpace;
+  renderer.outputEncoding = T.sRGBEncoding;
   renderer.toneMapping = T.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.55;
+  renderer.toneMappingExposure = 0.95;
   const scene = new T.Scene(),
     camera = new T.PerspectiveCamera(32, 1, 0.1, 60);
   camera.position.set(0, 0.2, 10);
@@ -43,20 +46,21 @@ function createHmelBottle(canvas, beer, motionQuery) {
   ec.fillRect(800, 130, 180, 190);
   const envTexture = new T.CanvasTexture(envCanvas);
   envTexture.mapping = T.EquirectangularReflectionMapping;
-  envTexture.colorSpace = T.SRGBColorSpace;
+  envTexture.encoding = T.sRGBEncoding;
   const pmrem = new T.PMREMGenerator(renderer),
     envTarget = pmrem.fromEquirectangular(envTexture);
   scene.environment = envTarget.texture;
   envTexture.dispose();
   pmrem.dispose();
-  scene.add(new T.HemisphereLight(0xffffff, 0x40371f, 2));
-  const key = new T.DirectionalLight(0xfff1d8, 3);
+  // Keep the softbox highlights, with less fill to reveal the glass curvature.
+  scene.add(new T.HemisphereLight(0xffffff, 0x40371f, 0.45));
+  const key = new T.DirectionalLight(0xfff1d8, 2);
   key.position.set(-3, 5, 5);
   scene.add(key);
-  const rim = new T.DirectionalLight(0xc2f550, 2.5);
+  const rim = new T.DirectionalLight(0xc2f550, 1.5);
   rim.position.set(3, 3, -2);
   scene.add(rim);
-  const front = new T.DirectionalLight(0xffffff, 1.2);
+  const front = new T.DirectionalLight(0xffffff, 0.35);
   front.position.set(0, 1, 5);
   scene.add(front);
   const glass = new T.MeshPhysicalMaterial({
@@ -65,7 +69,7 @@ function createHmelBottle(canvas, beer, motionQuery) {
     roughness: 0.17,
     clearcoat: 1,
     clearcoatRoughness: 0.1,
-    envMapIntensity: 1.4,
+    envMapIntensity: 0.85,
   });
   const points = [
     [0.02, -2.15],
@@ -146,15 +150,17 @@ function createHmelBottle(canvas, beer, motionQuery) {
   }
   drawLabel();
   const labelTexture = new T.CanvasTexture(labelCanvas);
-  labelTexture.colorSpace = T.SRGBColorSpace;
+  labelTexture.encoding = T.sRGBEncoding;
   labelTexture.anisotropy = Math.min(
     renderer.capabilities.getMaxAnisotropy(),
     8,
   );
   const labelMat = new T.MeshStandardMaterial({
     map: labelTexture,
-    roughness: 0.82,
+    // Matte paper receives scene lighting without a broad reflective veil.
+    roughness: 0.95,
     metalness: 0,
+    envMapIntensity: 0.25,
   });
   const label = new T.Mesh(
     new T.CylinderGeometry(0.498, 0.498, 1.56, 80, 1, true),
