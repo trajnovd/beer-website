@@ -34,4 +34,14 @@ The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google
 
 The cookie notice is in every page's HTML; accepting it sets one `hmel-consent` cookie (1 year), and a head script hides the notice when that cookie exists. Preferences are stored locally on the visitor’s device. Themes initially follow the system setting. Motion follows the system reduced-motion preference, with a separate footer pause control. WebGL failures retain a photographic fallback; scenes stop rendering when outside the viewport or when the tab is hidden.
 
-The brewery and its contact details are fictional. The visit form validates the request and shows a review before offering a mailto link. It does not submit to a backend, send email automatically, or confirm a booking.
+The brewery and its contact details are fictional.
+
+## Connect the booking form
+
+The visit form sends through [Web3Forms](https://web3forms.com), which emails each request to the address you register. No backend is involved.
+
+1. On web3forms.com, enter the email address that should receive requests and create an access key. The key arrives by email.
+2. Paste it into `WEB3FORMS_ACCESS_KEY` at the top of `data.js`. The key is designed to be public, so committing it is fine.
+3. Run `npm run build`, commit, and redeploy.
+
+While the key is empty, the form shows that it is not connected, and submitting it offers a prepared email instead of claiming the request was sent. With a key, a failed send shows the reason and keeps what the visitor typed.

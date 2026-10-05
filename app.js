@@ -284,13 +284,13 @@
       date.min = minDate;
       const group = form.elements.guests;
       const syncGroup = () => {
-        group.min = form.elements.experience.value === "2" ? "10" : "1";
+        group.min = form.elements.experience.selectedIndex === 2 ? "10" : "1";
         if (Number(group.value) < Number(group.min)) group.value = group.min;
       };
       form.elements.experience.addEventListener("change", syncGroup);
       document.querySelectorAll("[data-experience]").forEach((a) =>
         a.addEventListener("click", () => {
-          form.elements.experience.value = a.dataset.experience;
+          form.elements.experience.selectedIndex = Number(a.dataset.experience);
           syncGroup();
         }),
       );
@@ -303,7 +303,37 @@
             : "I would like to taste ") +
           requestedBeer.name[state.lang] +
           ".";
-      form.addEventListener("submit", (event) => {
+      const status = document.querySelector("#form-status"),
+        submit = form.querySelector('[type="submit"]');
+      const show = (lines, mailBody) => {
+        status.replaceChildren(
+          ...lines.map((line) => {
+            const p = document.createElement("p");
+            p.textContent = line;
+            return p;
+          }),
+        );
+        if (mailBody) {
+          const a = document.createElement("a");
+          a.className = "text-link";
+          a.textContent =
+            state.lang === "mk" ? "Отвори во е-пошта ↗" : "Open in email app ↗";
+          a.href =
+            "mailto:tastings@pivarahmel.mk?subject=" +
+            encodeURIComponent(
+              state.lang === "mk" ? "Барање за посета" : "Visit request",
+            ) +
+            "&body=" +
+            encodeURIComponent(mailBody);
+          status.append(a);
+        }
+        status.hidden = false;
+        status.scrollIntoView({
+          behavior: reduce.matches ? "instant" : "smooth",
+          block: "nearest",
+        });
+      };
+      form.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!form.reportValidity()) return;
         const f = new FormData(form),
@@ -314,35 +344,64 @@
           [
             (mk ? "Име: " : "Name: ") + f.get("name"),
             (mk ? "Е-пошта: " : "Email: ") + f.get("email"),
-            (mk ? "Искуство: " : "Experience: ") +
-              services[Number(f.get("experience"))].title[state.lang],
+            (mk ? "Искуство: " : "Experience: ") + f.get("experience"),
             (mk ? "Датум: " : "Date: ") + f.get("date"),
             (mk ? "Гости: " : "Guests: ") + f.get("guests"),
             "\n" + f.get("message"),
           ].join("\n");
-        const status = document.querySelector("#form-status");
-        status.replaceChildren();
-        const heading = document.createElement("p");
-        heading.textContent = mk
-          ? "Твоето барање е подготвено. Не е испратена порака."
-          : "Your request is ready. No message has been sent.";
-        const body = document.createElement("p");
-        body.textContent = message;
-        body.style.marginTop = "15px";
-        const a = document.createElement("a");
-        a.className = "text-link";
-        a.textContent = mk ? "Отвори во е-пошта ↗" : "Open in email app ↗";
-        a.href =
-          "mailto:tastings@pivarahmel.mk?subject=" +
-          encodeURIComponent(mk ? "Барање за посета" : "Visit request") +
-          "&body=" +
-          encodeURIComponent(message);
-        status.append(heading, body, a);
-        status.hidden = false;
-        status.scrollIntoView({
-          behavior: reduce.matches ? "instant" : "smooth",
-          block: "nearest",
-        });
+        // No key in data.js: say so instead of pretending the request went anywhere.
+        if (!f.get("access_key")) {
+          show(
+            [
+              mk
+                ? "Формуларот сè уште не е поврзан. Барањето не е испратено."
+                : "This form is not connected yet. Your request was not sent.",
+              mk
+                ? "Испрати го сам(а) по е-пошта:"
+                : "You can send it yourself by email:",
+              message,
+            ],
+            message,
+          );
+          return;
+        }
+        submit.disabled = true;
+        show([mk ? "Се испраќа…" : "Sending…"]);
+        try {
+          const res = await fetch(form.action, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(Object.fromEntries(f)),
+            signal: AbortSignal.timeout(15000),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.success)
+            throw new Error(data.message || "HTTP " + res.status);
+          form.reset();
+          syncGroup();
+          show([
+            mk ? "Пораката е испратена." : "Message sent.",
+            (mk ? "Ќе ти одговориме на " : "We will reply to ") +
+              f.get("email") +
+              ".",
+          ]);
+        } catch (error) {
+          show(
+            [
+              mk ? "Пораката не е испратена." : "Your message was not sent.",
+              (mk ? "Причина: " : "Reason: ") + error.message,
+              mk
+                ? "Обиди се повторно или испрати ја по е-пошта:"
+                : "Try again, or send it by email:",
+            ],
+            message,
+          );
+        } finally {
+          submit.disabled = false;
+        }
       });
     }
   }

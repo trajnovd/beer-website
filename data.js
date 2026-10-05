@@ -1,3 +1,7 @@
+/* Booking form: paste the Web3Forms access key here (https://web3forms.com).
+   The key is meant to be public. While it is empty the form says it is not connected. */
+const WEB3FORMS_ACCESS_KEY = "";
+
 const beers = [
   {
     slug: "zrno",
@@ -592,4 +596,13 @@ function brewStages(beer) {
 }
 
 if (typeof module !== "undefined")
-  module.exports = { beers, services, posts, faqs, state, brewStages, srmRgb };
+  module.exports = {
+    WEB3FORMS_ACCESS_KEY,
+    beers,
+    services,
+    posts,
+    faqs,
+    state,
+    brewStages,
+    srmRgb,
+  };
