@@ -12,6 +12,7 @@ const routes = [
   ["process.html", "process"],
   ["journal.html", "journal"],
   ["visit.html", "visit"],
+  ["cookies.html", "cookies"],
   ...beers.map((b) => ["pivo/" + b.slug + ".html", "beer", b.slug]),
 ];
 let links = 0;
@@ -30,6 +31,10 @@ for (const [file, page, slug] of routes) {
     assert.ok(
       html.includes('<main id="main">') && html.includes("</main>"),
       `${file}: main landmark`,
+    );
+    assert.ok(
+      html.includes('class="cookie-banner"') && html.includes("cookies.html"),
+      `${file}/${lang}: cookie notice and policy link`,
     );
     const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
     assert.equal(new Set(ids).size, ids.length, `${file}/${lang}: unique IDs`);

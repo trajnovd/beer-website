@@ -164,6 +164,7 @@
       process: ["Процесот", "The process"],
       journal: ["Дневник", "Journal"],
       visit: ["Посети нè", "Visit us"],
+      cookies: ["Колачиња", "Cookies"],
     };
     const beer = beers.find((b) => b.slug === document.body.dataset.beer);
     document.title =
@@ -174,6 +175,12 @@
           ]) +
       " — " +
       (state.lang === "mk" ? "Пивара Хмел" : "Pivara Hmel");
+    document.querySelector(".cookie-accept")?.addEventListener("click", () => {
+      document.cookie =
+        "hmel-consent=1; Max-Age=31536000; Path=/; SameSite=Lax" +
+        (location.protocol === "https:" ? "; Secure" : "");
+      document.documentElement.dataset.consent = "1";
+    });
     const motionButton = document.querySelector(".motion-toggle");
     const syncMotion = () => {
       const stopped = reduce.matches || saved("hmel-motion") === "paused";

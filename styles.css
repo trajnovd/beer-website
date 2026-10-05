@@ -2413,3 +2413,85 @@ summary {
     font-size: 12px;
   }
 }
+.cookie-banner {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 14;
+  max-width: 460px;
+  padding: 20px 22px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 13px;
+  line-height: 1.55;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+[data-consent] .cookie-banner,
+.menu-open .cookie-banner {
+  display: none;
+}
+.cookie-banner p {
+  margin: 0 0 16px;
+}
+.cookie-banner > div {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.cookie-banner .button {
+  padding: 12px 20px;
+}
+.cookie-banner .text-link {
+  border-color: currentColor;
+}
+.cookie-banner :focus-visible {
+  outline-color: var(--accent);
+}
+.policy {
+  padding-top: 0;
+  max-width: 900px;
+}
+.policy h2 {
+  font-family: var(--display);
+  font-size: 34px;
+  text-transform: uppercase;
+  margin: 50px 0 16px;
+}
+.policy h2:first-child {
+  margin-top: 0;
+}
+.policy p {
+  color: var(--muted);
+  max-width: 640px;
+}
+.policy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+.policy-list li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.policy-list h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+.policy-list p {
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.policy-list small {
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  .cookie-banner {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: none;
+    padding: 16px 6vw;
+  }
+}
