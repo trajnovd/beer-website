@@ -1453,6 +1453,8 @@ small {
   display: grid;
   grid-template-columns: 1fr 1fr;
   position: relative;
+  /* The oversized watermark bleeds off the screen edge instead of widening the page. */
+  overflow-x: clip;
   min-height: 750px;
   padding-top: 40px;
   padding-bottom: 60px;
@@ -2099,7 +2101,8 @@ textarea {
     margin-bottom: 35px;
   }
   .detail-copy h1 {
-    font-size: 28vw;
+    /* Fits the longest name (Калуѓер, 7 letters) inside the side margins. */
+    font-size: 23vw;
   }
   .beer-meaning {
     margin: 15px 0 20px;
@@ -2245,7 +2248,8 @@ textarea {
     grid-column: 1/-1;
   }
   .form-row {
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .booking-form label {
     font-size: 12px;
