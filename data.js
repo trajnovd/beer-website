@@ -1,6 +1,6 @@
 /* Booking form: paste the Web3Forms access key here (https://web3forms.com).
    The key is meant to be public. While it is empty the form says it is not connected. */
-const WEB3FORMS_ACCESS_KEY = "";
+const WEB3FORMS_ACCESS_KEY = "ae815969-98ad-40c1-a843-9cd93b4b374b";
 /* Footer social links. Placeholder handles: the brewery is fictional and the PRD names none. */
 const SOCIAL_LINKS = [
   ["Instagram", "https://www.instagram.com/pivarahmel/"],
