@@ -1,8 +1,5 @@
-/* Shared, server-rendered page templates. The same functions switch language locally. */
-const D =
-  typeof module !== "undefined"
-    ? require("./data.js")
-    : { beers, services, posts, faqs };
+/* Page templates, rendered at build time into one static file per page and language. */
+const D = require("./data.js");
 const words = (mk, en, lang) => (lang === "mk" ? mk : en);
 const icons = {
   arrow:
@@ -13,9 +10,12 @@ const icons = {
 function renderPage(page = "home", lang = "mk", slug = "") {
   const w = (mk, en) => words(mk, en, lang),
     b = D.beers.find((b) => b.slug === slug),
-    root = page === "beer" ? "../" : "";
-  const href = (p) => root + p,
-    asset = (p) => root + "public/assets/" + p;
+    file = pageFile(page, slug),
+    up = page === "beer" ? "../" : "",
+    siteRoot = siteRootFor(page, lang);
+  // Page links stay inside this language's folder; assets are shared at the site root.
+  const href = (p) => up + p,
+    asset = (p) => siteRoot + "public/assets/" + p;
   const nav = [
     ["beers.html", w("Пивата", "The beers"), "beers"],
     ["brewery.html", w("Пиварницата", "Our brewery"), "brewery"],
@@ -32,7 +32,7 @@ function renderPage(page = "home", lang = "mk", slug = "") {
     `<a class="beer-card reveal" href="${href("pivo/" + beer.slug + ".html")}" style="--beer:${beer.color}"><div class="beer-card-image">${image("bottles/" + beer.slug + "-ai.jpg", beer.name[lang] + " — " + beer.style[lang])}<span class="card-index">0${i + 1} / 05</span><span class="card-arrow">${icons.arrow}</span></div><div class="beer-card-info"><div><h3>${beer.name[lang]}</h3><p>${beer.style[lang]}</p></div><span>${beer.abv}<small>ABV</small></span></div></a>`;
   const cta = () =>
     `<section class="visit-cta section"><div>${label("ХМЕЛ", w("Најдобро е во друштво", "Better together"))}<h2 class="display reveal">${w("ТВОЕ МЕСТО.<br>НАША ТУРА.", "YOUR PEOPLE.<br>OUR ROUND.")}</h2></div>${link("visit.html", w("Дојди на дегустација", "Come for a tasting"), "button button-dark")}</section>`;
-  const header = `<a class="skip-link" href="#main">${w("Кон содржината", "Skip to content")}</a><header class="site-header"><a class="wordmark" href="${href("index.html")}" aria-label="${w("Хмел — почетна", "Hmel — home")}">${w("хмел", "hmel")}<span>®</span><small>${w("НЕЗАВИСНА ПИВАРНИЦА", "INDEPENDENT BREWERY")}</small></a><nav class="desktop-nav" aria-label="${w("Главна навигација", "Main navigation")}">${nav.map(([url, title, key]) => `<a href="${href(url)}" ${key === page ? 'aria-current="page"' : ""}>${title}</a>`).join("")}</nav><div class="header-actions"><button class="language-toggle" type="button" aria-label="${w("Switch to English", "Промени на македонски")}">${lang === "mk" ? "EN" : "МК"}</button><button class="theme-toggle icon-button" type="button" aria-label="${w("Промени тема", "Change color theme")}" aria-pressed="false"><span class="sun-icon">${icons.sun}</span><span class="moon-icon">${icons.moon}</span></button>${link("visit.html", w("Посети нè", "Visit us"), "header-visit")}<button type="button" class="menu-toggle icon-button" aria-label="${w("Мени", "Menu")}" aria-controls="mobile-nav" aria-expanded="false"><span></span><span></span></button></div></header><nav id="mobile-nav" class="mobile-nav" hidden aria-label="${w("Мобилна навигација", "Mobile navigation")}">${[...nav, ["visit.html", w("Посети нè", "Visit us"), "visit"]].map(([url, title], i) => `<a href="${href(url)}"><small>0${i + 1}</small>${title}${icons.arrow}</a>`).join("")}</nav><div class="scroll-progress" aria-hidden="true"></div>`;
+  const header = `<a class="skip-link" href="#main">${w("Кон содржината", "Skip to content")}</a><header class="site-header"><a class="wordmark" href="${href("index.html")}" aria-label="${w("Хмел — почетна", "Hmel — home")}">${w("хмел", "hmel")}<span>®</span><small>${w("НЕЗАВИСНА ПИВАРНИЦА", "INDEPENDENT BREWERY")}</small></a><nav class="desktop-nav" aria-label="${w("Главна навигација", "Main navigation")}">${nav.map(([url, title, key]) => `<a href="${href(url)}" ${key === page ? 'aria-current="page"' : ""}>${title}</a>`).join("")}</nav><div class="header-actions"><a class="language-toggle" href="${siteRoot}${lang === "mk" ? "en/" : ""}${file}" hreflang="${w("en", "mk")}" lang="${w("en", "mk")}" aria-label="${w("Read in English", "Прочитај на македонски")}">${w("EN", "МК")}</a><button class="theme-toggle icon-button" type="button" aria-label="${w("Промени тема", "Change color theme")}" aria-pressed="false"><span class="sun-icon">${icons.sun}</span><span class="moon-icon">${icons.moon}</span></button>${link("visit.html", w("Посети нè", "Visit us"), "header-visit")}<button type="button" class="menu-toggle icon-button" aria-label="${w("Мени", "Menu")}" aria-controls="mobile-nav" aria-expanded="false"><span></span><span></span></button></div></header><nav id="mobile-nav" class="mobile-nav" hidden aria-label="${w("Мобилна навигација", "Mobile navigation")}">${[...nav, ["visit.html", w("Посети нè", "Visit us"), "visit"]].map(([url, title], i) => `<a href="${href(url)}"><small>0${i + 1}</small>${title}${icons.arrow}</a>`).join("")}</nav><div class="scroll-progress" aria-hidden="true"></div>`;
   let content = "";
   if (page === "home")
     content = `<section class="home-hero"><div class="hero-topline"><span><i class="status-dot"></i>${w("МАЛА СЕРИЈА. ГОЛЕМ КАРАКТЕР.", "SMALL BATCH. BIG CHARACTER.")}</span><span>${w("СКОПЈЕ, МАКЕДОНИЈА", "SKOPJE, MACEDONIA")} ↗</span></div><h1 class="hero-title"><span>${w("ДОБРО", "GOOD")}</span><span class="outline">${w("ПИВО.", "BEER.")}</span><span>${w("СВОЈ", "FREE")}</span><span>${w("ДУХ.", "SPIRIT.")}</span></h1><div class="hero-product"><div class="product-orbit" aria-hidden="true"></div><span class="product-coordinate">41°59′ N<br>21°26′ E</span>${image("bottles/zrno-ai.jpg", w("Зрно, нашиот светол лагер", "Zrno, our pale lager"), "scene-fallback", false)}<canvas class="bottle-canvas" data-bottle="zrno" aria-label="${w("Интерактивно 3Д шише Зрно", "Interactive 3D Zrno beer bottle")}"></canvas><div class="hero-stamp"><span>${w("НЕЗАВИСНО", "INDEPENDENT")}</span><b>100%</b><span>${w("СО КАРАКТЕР", "FULL OF CHARACTER")}</span></div><span class="drag-hint">↔ ${w("ПОВЛЕЧИ ЗА ДА ГО ЗАВРТИШ", "DRAG TO SPIN")}</span></div><div class="hero-bottom"><div class="hero-description"><p>${w("Од првото зрно до последната голтка. Пет пива од Скопје, секое со свој карактер.", "From the first grain to the last sip. Five beers from Skopje, each with a mind of its own.")}</p>${link("beers.html", w("Откриј ги пивата", "Explore the beers"), "button button-accent")}</div><a class="hero-feature" href="${href("pivo/zrno.html")}"><span>${w("ВО ФОКУС / 01", "IN FOCUS / 01")}</span><strong>${w("Зрно", "Zrno")} <i>↗</i></strong><small>PALE LAGER · 4.8% ABV</small></a><a class="scroll-cue" href="#collection">${w("НАДОЛУ", "SCROLL TO DISCOVER")}<span>↓</span></a></div></section><div class="marquee" aria-hidden="true"><div>${Array(
@@ -168,7 +168,6 @@ function renderPage(page = "home", lang = "mk", slug = "") {
     content = `${intro("ХМЕЛ", w("Приватност", "Privacy"), w("КОЛАЧИЊА.<br><em>БЕЗ СЛЕДЕЊЕ.</em>", "COOKIES.<br><em>NO TRACKING.</em>"), w("Што зачувуваме на твојот уред и зошто. Нема аналитика, реклами ни следење.", "What we store on your device, and why. No analytics, no ads, no tracking."))}<section class="section policy"><h2>${w("Што зачувуваме", "What we store")}</h2><ul class="policy-list">${[
       ["hmel-consent", w("колаче", "cookie"), w("Памети дека го затвори известувањето за колачиња.", "Remembers that you closed the cookie notice."), w("1 година", "1 year")],
       ["hmel-theme", w("локално складирање", "local storage"), w("Светла или темна тема.", "Light or dark theme.")],
-      ["hmel-lang", w("локално складирање", "local storage"), w("Македонски или англиски.", "Macedonian or English.")],
       ["hmel-motion", w("локално складирање", "local storage"), w("Дали го паузираше движењето на страницата.", "Whether you paused motion on the site.")],
     ]
       .map(([name, where, why, how = w("додека не го избришеш", "until you clear it")]) => `<li><h3><code>${name}</code></h3><p>${why}</p><small>${where} · ${how}</small></li>`)
@@ -176,7 +175,15 @@ function renderPage(page = "home", lang = "mk", slug = "") {
 
   const footer = `<footer class="site-footer section"><div class="footer-top"><p>${w("МАЛА ПИВАРНИЦА.<br>ГОЛЕМ КАРАКТЕР.", "SMALL BREWERY.<br>BIG CHARACTER.")}</p><div>${nav.map(([url, title]) => `<a href="${href(url)}">${title}</a>`).join("")}</div><div><a href="${href("visit.html")}">${w("Посети нè", "Come say hello")} ↗</a><a href="mailto:tastings@pivarahmel.mk">tastings@pivarahmel.mk</a><span>${w("Скопје, Македонија", "Skopje, Macedonia")}</span></div></div><a class="footer-wordmark" href="${href("index.html")}">${w("хмел", "hmel")}<sup>®</sup></a><div class="footer-bottom"><span>© 2026 ${w("Пивара Хмел", "Pivara Hmel")}</span><span>${w("Студентски концепт · измислена пиварница", "Student concept · fictional brewery")}</span><a href="${href("cookies.html")}">${w("Колачиња", "Cookies")}</a><button type="button" class="motion-toggle" aria-pressed="false">${w("Паузирај движење", "Pause motion")}</button><span>18+ · ${w("Уживај одговорно", "Enjoy responsibly")}</span></div></footer>`;
   // In the HTML for every visitor (crawlers included); the head script hides it once accepted.
-  const cookieBanner = `<section class="cookie-banner" aria-label="${w("Известување за колачиња", "Cookie notice")}"><p>${w("Користиме едно колаче за да го запомниме овој избор и локално складирање за темата, јазикот и движењето. Без следење и реклами.", "We use one cookie to remember this choice, and local storage for your theme, language and motion settings. No tracking, no ads.")}</p><div><button type="button" class="button button-accent cookie-accept">${w("Прифати", "Accept")}</button><a class="text-link" href="${href("cookies.html")}">${w("Дознај повеќе", "Learn more")}</a></div></section>`;
+  const cookieBanner = `<section class="cookie-banner" aria-label="${w("Известување за колачиња", "Cookie notice")}"><p>${w("Користиме едно колаче за да го запомниме овој избор и локално складирање за темата и движењето. Без следење и реклами.", "We use one cookie to remember this choice, and local storage for your theme and motion settings. No tracking, no ads.")}</p><div><button type="button" class="button button-accent cookie-accept">${w("Прифати", "Accept")}</button><a class="text-link" href="${href("cookies.html")}">${w("Дознај повеќе", "Learn more")}</a></div></section>`;
   return header + `<main id="main">${content}</main>` + footer + cookieBanner;
 }
-if (typeof module !== "undefined") module.exports = { renderPage };
+function pageFile(page, slug = "") {
+  if (page === "home") return "index.html";
+  return page === "beer" ? "pivo/" + slug + ".html" : page + ".html";
+}
+// Macedonian pages live at the site root, English ones under en/.
+function siteRootFor(page, lang) {
+  return (lang === "en" ? "../" : "") + (page === "beer" ? "../" : "");
+}
+module.exports = { renderPage, pageFile, siteRootFor };

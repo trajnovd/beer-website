@@ -1,6 +1,6 @@
 # Hmel — Independent Craft Brewery
 
-A complete multi-page redesign of the fictional **Пивара Хмел** student brewery project. Twelve pre-rendered pages, Macedonian and English, light and dark themes, and interactive Three.js product scenes.
+A complete multi-page redesign of the fictional **Пивара Хмел** student brewery project. Twelve pages pre-rendered in Macedonian (site root) and English (`en/`), light and dark themes, and interactive Three.js product scenes.
 
 ```sh
 npm run build  # generates the HTML pages and dist/ production directory
@@ -8,7 +8,7 @@ npm run dev    # local server, http://localhost:5173
 npm run check  # recipe invariants and page integrity
 ```
 
-The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google Fonts with system fallbacks. There are no runtime npm dependencies. All primary content and navigation are pre-rendered and remain accessible without JavaScript. Run the build after editing templates or data.
+The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google Fonts with system fallbacks. There are no runtime npm dependencies. All primary content and navigation, in both languages, are pre-rendered and remain accessible without JavaScript. The language switch is a plain link to the same page in the other language, and every page declares both versions with `hreflang`. Run the build after editing templates or data.
 
 ## Pages
 
@@ -24,11 +24,11 @@ The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google
 ## Source
 
 - `data.js`: original bilingual recipes, experiences, articles, and FAQs; brewing calculations
-- `templates.js`: bilingual HTML templates shared by the static build and client language switch
+- `templates.js`: bilingual HTML templates, used only by the build
 - `styles.css`: responsive layouts, both themes, transitions, reduced-motion support
-- `app.js`: themes, language, navigation, brewing controls, request preparation, and animation lifecycle
+- `app.js`: themes, navigation, brewing controls, request preparation, and animation lifecycle
 - `scene.js`: Three.js bottle geometry, branded label textures, studio lighting, drag/keyboard rotation, and resource cleanup
-- `build.mjs`: generates all pages and stages public production assets
+- `build.mjs`: generates every page in both languages and stages public production assets
 - `public/assets/`: original brewery photography and identity
 - `.openai/hosting.json`: private Sites hosting configuration
 

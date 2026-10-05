@@ -12,15 +12,8 @@
       localStorage.setItem(key, value);
     } catch {}
   };
-  let cleanup = () => {};
   function boot() {
-    const page = document.body.dataset.page,
-      slug = document.body.dataset.beer || "";
-    state.lang = saved("hmel-lang") === "en" ? "en" : "mk";
-    if (state.lang === "en") {
-      document.body.innerHTML = renderPage(page, state.lang, slug);
-      document.documentElement.lang = state.lang;
-    }
+    state.lang = document.documentElement.lang === "en" ? "en" : "mk";
     bind();
   }
   function bind() {
@@ -53,21 +46,6 @@
       save("hmel-theme", theme);
       syncTheme();
     });
-    document
-      .querySelector(".language-toggle")
-      ?.addEventListener("click", () => {
-        cleanup();
-        state.lang = state.lang === "mk" ? "en" : "mk";
-        save("hmel-lang", state.lang);
-        document.documentElement.lang = state.lang;
-        document.body.classList.remove("menu-open");
-        document.body.innerHTML = renderPage(
-          document.body.dataset.page,
-          state.lang,
-          document.body.dataset.beer || "",
-        );
-        bind();
-      });
     const menu = document.querySelector(".menu-toggle"),
       nav = document.querySelector("#mobile-nav");
     const close = () => {
@@ -148,33 +126,10 @@
     };
     window.addEventListener("scroll", scroll, { passive: true });
     scroll();
-    const disposers = [];
     const menuBreakpoint = matchMedia("(max-width: 760px)");
-    const resizedMenu = () => {
+    menuBreakpoint.addEventListener("change", () => {
       if (!menuBreakpoint.matches) close();
-    };
-    menuBreakpoint.addEventListener("change", resizedMenu);
-    disposers.push(() =>
-      menuBreakpoint.removeEventListener("change", resizedMenu),
-    );
-    const pageNames = {
-      home: ["Добро пиво. Свој дух.", "Good beer. Free spirit."],
-      beers: ["Пивата", "The beers"],
-      brewery: ["Пиварницата", "Our brewery"],
-      process: ["Процесот", "The process"],
-      journal: ["Дневник", "Journal"],
-      visit: ["Посети нè", "Visit us"],
-      cookies: ["Колачиња", "Cookies"],
-    };
-    const beer = beers.find((b) => b.slug === document.body.dataset.beer);
-    document.title =
-      (beer
-        ? beer.name[state.lang]
-        : (pageNames[document.body.dataset.page] || pageNames.home)[
-            state.lang === "mk" ? 0 : 1
-          ]) +
-      " — " +
-      (state.lang === "mk" ? "Пивара Хмел" : "Pivara Hmel");
+    });
     document.querySelector(".cookie-accept")?.addEventListener("click", () => {
       document.cookie =
         "hmel-consent=1; Max-Age=31536000; Path=/; SameSite=Lax" +
@@ -212,11 +167,10 @@
       syncMotion();
     });
     reduce.addEventListener("change", syncMotion);
-    disposers.push(() => reduce.removeEventListener("change", syncMotion));
     document.querySelectorAll(".bottle-canvas").forEach((canvas) => {
       const b = beers.find((b) => b.slug === canvas.dataset.bottle);
       if (b && typeof createHmelBottle === "function")
-        disposers.push(createHmelBottle(canvas, b, reduce));
+        createHmelBottle(canvas, b, reduce);
     });
     const readout = document.querySelector(".brew-readout");
     if (readout) {
@@ -260,10 +214,6 @@
       window.addEventListener("scroll", trackChapter, { passive: true });
       window.addEventListener("resize", trackChapter);
       updateChapter();
-      disposers.push(() => {
-        window.removeEventListener("scroll", trackChapter);
-        window.removeEventListener("resize", trackChapter);
-      });
     }
     const recipeSection = document.querySelector("[data-recipe]");
     if (recipeSection) {
@@ -395,14 +345,6 @@
         });
       });
     }
-
-    cleanup = () => {
-      disposers.forEach((dispose) => dispose());
-      observer?.disconnect();
-      document.removeEventListener("keydown", key);
-      window.removeEventListener("scroll", scroll);
-      if (window.gsap) gsap.globalTimeline.clear();
-    };
   }
   document.addEventListener("DOMContentLoaded", boot);
 })();
