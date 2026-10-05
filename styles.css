@@ -3,7 +3,7 @@
   --bg: #f4f4ee;
   --surface: #e9ebe1;
   --ink: #1c241c;
-  --muted: #687061;
+  --muted: #5f6658;
   --line: #cbd0c1;
   --accent: #c2f550;
   --accent-text: #395515;
@@ -72,7 +72,9 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+/* A date field only matches :focus-within while its built-in calendar button has focus. */
+input[type="date"]:focus-within {
   outline: 2px solid var(--accent-text);
   outline-offset: 6px;
 }
@@ -2538,4 +2540,9 @@ summary {
 }
 .footer-social svg {
   width: 18px;
+}
+.catalog-label h2 {
+  font: inherit;
+  letter-spacing: inherit;
+  margin: 0;
 }
