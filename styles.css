@@ -2485,7 +2485,6 @@ summary {
 .form-offline {
   margin: 0 0 22px;
   padding: 12px 16px;
-  border-left: 3px solid var(--accent-text);
   background: var(--surface);
   font-size: 13px;
 }
