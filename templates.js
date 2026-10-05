@@ -105,7 +105,7 @@ function renderPage(page = "home", lang = "mk", slug = "") {
       )}</section><section class="section"><div class="section-heading"><div>${label("03", w("Тимот зад сајтот", "The team behind the site"))}<h2 class="display reveal">${w("ЧЕТИРИ ПАРА РАЦЕ.<br>ЕДЕН САЈТ.", "FOUR PAIRS OF HANDS.<br>ONE SITE.")}</h2></div></div><div class="team-grid">${D.team
       .map(
         (m) =>
-          `<article class="team-card reveal"><div class="team-portrait">${image("team/" + m.id + ".webp", m.role[lang])}</div><h3>${m.role[lang]}</h3><p>${m.bio[lang]}</p></article>`,
+          `<article class="team-card reveal"><div class="team-portrait">${image("team/" + m.id + ".webp", m.name[lang] + ", " + m.role[lang])}</div><p class="eyebrow">${m.role[lang]}</p><h3>${m.name[lang]}</h3><p>${m.bio[lang]}</p></article>`,
       )
       .join("")}</div></section>${cta()}`;
   if (page === "process")

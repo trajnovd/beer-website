@@ -1275,11 +1275,15 @@ small {
   aspect-ratio: 4 / 5;
   background: var(--surface);
 }
+.team-card .eyebrow {
+  font-size: 12px;
+  margin: 30px 0 15px;
+}
 .team-card h3 {
   font-family: var(--display);
   font-size: 37px;
   text-transform: uppercase;
-  margin: 30px 0 20px;
+  margin-bottom: 20px;
 }
 .team-card > p:last-child {
   font-size: 14px;
@@ -1996,6 +2000,9 @@ textarea {
   .team-grid {
     grid-template-columns: 1fr;
     gap: 35px;
+  }
+  .team-card .eyebrow {
+    margin-top: 20px;
   }
   .team-card h3 {
     font-size: 35px;

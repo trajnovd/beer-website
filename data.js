@@ -412,7 +412,8 @@ const services = [
 /* The student team that built the site; the photo is public/assets/team/<id>.webp. */
 const team = [
   {
-    id: "headshot-1",
+    id: "bojan-eftimoski",
+    name: { mk: "Бојан Ефтимоски", en: "Bojan Eftimoski" },
     role: { mk: "UI и визуелен дизајн", en: "UI and visual design" },
     bio: {
       mk: "Дизајн системот, фонтовите, лентата со пивата и изгледот на секој екран.",
@@ -420,7 +421,8 @@ const team = [
     },
   },
   {
-    id: "headshot-2",
+    id: "darko-trajanov",
+    name: { mk: "Дарко Трајанов", en: "Darko Trajanov" },
     role: { mk: "Фронтенд развој", en: "Front-end development" },
     bio: {
       mk: "Страниците за пивата, 3D шишето, шаблоните и двата јазика.",
@@ -428,7 +430,8 @@ const team = [
     },
   },
   {
-    id: "headshot-3",
+    id: "jakov-spirovski",
+    name: { mk: "Јаков Спировски", en: "Jakov Spirovski" },
     role: { mk: "Бекенд и објавување", en: "Back-end and deployment" },
     bio: {
       mk: "Градењето на страниците, формуларот за посета, Docker и објавувањето.",
@@ -436,7 +439,8 @@ const team = [
     },
   },
   {
-    id: "headshot-4",
+    id: "stefan-cvetanovski",
+    name: { mk: "Стефан Цветановски", en: "Stefan Cvetanovski" },
     role: { mk: "Содржина и тестирање", en: "Content and testing" },
     bio: {
       mk: "Текстовите на двата јазика, дневникот, пристапноста и проверките на сајтот.",
