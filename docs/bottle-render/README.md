@@ -51,3 +51,39 @@ causing the issue. `app.js` only initializes scenes and requires no change.
 - `git diff --check` passed.
 
 Local review only; no push or deployment.
+
+## Follow-up: individual colours and moving liquid
+
+The latest version is [glass + liquid comparison](liquid-comparison.png).
+The previous lighting-only render is the top row; the new version is below.
+The `after/` files above remain the previous version for comparison.
+
+- [Zrno PNG](liquid/zrno.png), [Magla PNG](liquid/magla.png),
+  [Kaluger PNG](liquid/kaluger.png), [Opat PNG](liquid/opat.png),
+  [Koren PNG](liquid/koren.png).
+- [Homepage PNG](liquid/home-zrno.png), [mobile PNG](liquid/mobile-koren.png).
+- [Recorded motion preview](liquid/motion-preview.webm).
+- [Browser verification results](liquid/verification.json).
+
+Changes:
+
+1. Read the existing `beer.color` for each liquid: Zrno `#E8B33A`, Magla `#E9CE72`,
+   Kaluger `#D9A227`, Opat `#6E3A1E`, Koren `#1E120B`. No recipe data changed.
+2. Replace the solid coloured bottle material with a separate refractive glass
+   shell (transmission 1, IOR 1.5, thickness 0.055, roughness 0.08, metalness 0),
+   with a light amber attenuation tint.
+3. Add an inner beer mesh with view-dependent absorption shading, clipped against
+   its own liquid surface. The beer shader approximates optical density; this is
+   a lightweight visual simulation, not computational fluid dynamics.
+4. Add a reflective surface and meniscus fitted to the inside of the shoulder.
+   The surface follows gravity instead of remaining glued to the bottle tilt.
+5. Drive slosh with a damped spring responding to rotation, plus small idle ripples
+   and 28 rising interior bubbles. Keep the existing exterior condensation.
+6. Freeze fluid motion under reduced motion or the site's pause control. Reuse
+   the existing visibility lifecycle and geometry/material disposal.
+
+Validation: rebuilt and rendered all five detail pages plus homepage with no
+browser errors; checked mobile rendering, finite surface coordinates, a nonzero
+slosh response to drag, settling after five seconds, advancing liquid time, and
+frozen time/slosh under reduced motion. Build, recipe/site checks and diff checks
+passed. Labels and the approved lighting settings remain unchanged.

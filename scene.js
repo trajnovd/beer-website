@@ -64,9 +64,14 @@ function createHmelBottle(canvas, beer, motionQuery) {
   front.position.set(0, 1, 5);
   scene.add(front);
   const glass = new T.MeshPhysicalMaterial({
-    color: beer.srm > 15 ? 0x271005 : 0x965019,
-    metalness: 0.24,
-    roughness: 0.17,
+    color: 0xffffff,
+    metalness: 0,
+    roughness: 0.08,
+    transmission: 1,
+    thickness: 0.055,
+    ior: 1.5,
+    attenuationColor: new T.Color(0xe5c798),
+    attenuationDistance: 1.8,
     clearcoat: 1,
     clearcoatRoughness: 0.1,
     envMapIntensity: 0.85,
@@ -91,6 +96,146 @@ function createHmelBottle(canvas, beer, motionQuery) {
   ].map((p) => new T.Vector2(...p));
   const body = new T.Mesh(new T.LatheGeometry(points, 80), glass);
   bottle.add(body);
+  // Separate liquid volume: colour belongs to the beer, not the glass shell.
+  const fillHeight = 0.88;
+  const liquidPlane = new T.Vector3(0, 1, 0);
+  const liquidUniforms = {
+    liquidPlane: { value: liquidPlane },
+    liquidTime: { value: 0 },
+    liquidRipple: { value: 0 },
+  };
+  const liquid = new T.MeshPhysicalMaterial({
+    color: beer.color,
+    metalness: 0,
+    roughness: 0.16,
+    ior: 1.33,
+    envMapIntensity: 0.35,
+  });
+  liquid.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, liquidUniforms);
+    shader.vertexShader = 'varying vec3 vLiquidPosition;\n' + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <begin_vertex>',
+      '#include <begin_vertex>\nvLiquidPosition = position;',
+    );
+    shader.fragmentShader = `
+      varying vec3 vLiquidPosition;
+      uniform vec3 liquidPlane;
+      uniform float liquidTime;
+      uniform float liquidRipple;
+    ` + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <clipping_planes_fragment>',
+      `#include <clipping_planes_fragment>
+       float wave = liquidRipple * sin(vLiquidPosition.x * 12.0 + liquidTime * 2.4)
+         * cos(vLiquidPosition.z * 9.0 - liquidTime * 1.7);
+       if (dot(liquidPlane, vLiquidPosition - vec3(0.0, ${fillHeight}, 0.0)) > wave) discard;`,
+    );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <normal_fragment_maps>',
+      `#include <normal_fragment_maps>
+       // Approximate absorption at grazing angles, independent of bottle rotation.
+       float depth = 1.0 - abs(dot(normal, normalize(vViewPosition)));
+       diffuseColor.rgb = pow(diffuseColor.rgb, vec3(1.15 + depth * 0.65))
+         * mix(0.58, 0.22, depth);`,
+    );
+  };
+  const innerPoints = points.map((p) => new T.Vector2(p.x * 0.93, p.y + 0.045));
+  bottle.add(new T.Mesh(new T.LatheGeometry(innerPoints, 80), liquid));
+  // A real top surface closes the clipped volume; its edge follows the shoulder.
+  const surfaceGeometry = new T.CircleGeometry(1, 80);
+  const surfaceMaterial = new T.MeshPhysicalMaterial({
+    color: new T.Color(beer.color).multiplyScalar(0.65),
+    roughness: 0.09,
+    metalness: 0,
+    ior: 1.33,
+    envMapIntensity: 0.65,
+    side: T.DoubleSide,
+  });
+  const surface = new T.Mesh(surfaceGeometry, surfaceMaterial);
+  bottle.add(surface);
+  const meniscus = new T.LineLoop(
+    new T.BufferGeometry().setFromPoints(Array.from({ length: 80 }, () => new T.Vector3())),
+    new T.LineBasicMaterial({ color: beer.color, transparent: true, opacity: 0.45 }),
+  );
+  bottle.add(meniscus);
+  // Small rising bubbles sit inside the liquid, separate from exterior condensation.
+  const bubbles = new T.InstancedMesh(
+    new T.SphereGeometry(1, 8, 6),
+    new T.MeshStandardMaterial({
+      color: new T.Color(beer.color).lerp(new T.Color(0xffffff), 0.45),
+      roughness: 0.12,
+      metalness: 0,
+      transparent: true,
+      opacity: 0.38,
+      depthWrite: false,
+    }),
+    28,
+  );
+  const bubbleDummy = new T.Object3D();
+  bottle.add(bubbles);
+  const inverseRotation = new T.Quaternion();
+  let slosh = 0, sloshVelocity = 0, lastRenderTime = 0, liquidClock = 0;
+  function innerRadius(y) {
+    for (let i = 2; i < innerPoints.length; i++) {
+      const a = innerPoints[i - 1], b = innerPoints[i];
+      if (y >= a.y && y <= b.y && b.y > a.y)
+        return T.MathUtils.lerp(a.x, b.x, (y - a.y) / (b.y - a.y));
+    }
+    return 0.18;
+  }
+  function updateLiquid(t, rotationDelta) {
+    const dt = Math.min(Math.max((t - lastRenderTime) / 1000, 0), 0.04);
+    lastRenderTime = t;
+    if (paused()) {
+      slosh = sloshVelocity = 0;
+    } else {
+      liquidClock += dt;
+      sloshVelocity += rotationDelta * 7;
+      sloshVelocity += (-16 * slosh - 3.8 * sloshVelocity) * dt;
+      slosh = T.MathUtils.clamp(slosh + sloshVelocity * dt, -0.16, 0.16);
+    }
+    inverseRotation.copy(bottle.quaternion).invert();
+    liquidPlane.set(0, 1, 0).applyQuaternion(inverseRotation);
+    liquidPlane.x += slosh + (paused() ? 0 : Math.sin(liquidClock * 1.8) * 0.025);
+    liquidPlane.normalize();
+    liquidUniforms.liquidTime.value = liquidClock;
+    liquidUniforms.liquidRipple.value = paused() ? 0 : 0.006 + Math.abs(slosh) * 0.05;
+    const positions = surfaceGeometry.attributes.position;
+    const edge = meniscus.geometry.attributes.position;
+    for (let i = 0; i < positions.count; i++) {
+      const angle = (i - 1) / 80 * Math.PI * 2;
+      let radius = i === 0 ? 0 : innerRadius(fillHeight);
+      let x = 0, y = fillHeight, z = 0;
+      for (let step = 0; step < 5; step++) {
+        x = Math.cos(angle) * radius;
+        z = Math.sin(angle) * radius;
+        const wave = liquidUniforms.liquidRipple.value
+          * Math.sin(x * 12 + liquidClock * 2.4) * Math.cos(z * 9 - liquidClock * 1.7);
+        y = fillHeight + (wave - liquidPlane.x * x - liquidPlane.z * z) / liquidPlane.y;
+        if (i !== 0) radius = innerRadius(y);
+      }
+      positions.setXYZ(i, x, y, z);
+      if (i > 0 && i <= 80) edge.setXYZ(i - 1, x, y + 0.003, z);
+    }
+    positions.needsUpdate = edge.needsUpdate = true;
+    surfaceGeometry.computeVertexNormals();
+    for (let i = 0; i < bubbles.count; i++) {
+      const phase = (i * 0.61803398875) % 1;
+      const y = -1.95 + ((phase * 2.85 + liquidClock * (0.08 + (i % 4) * 0.015)) % 2.85);
+      const radius = innerRadius(y) * (0.35 + (i % 5) * 0.1);
+      const angle = i * 2.39996;
+      const x = Math.sin(angle) * radius, z = Math.cos(angle) * radius;
+      const submerged = liquidPlane.x * x + liquidPlane.y * (y - fillHeight)
+        + liquidPlane.z * z < -0.025;
+      const size = submerged ? 0.004 + (i % 3) * 0.002 : 0;
+      bubbleDummy.position.set(x, y, z);
+      bubbleDummy.scale.setScalar(size);
+      bubbleDummy.updateMatrix();
+      bubbles.setMatrixAt(i, bubbleDummy.matrix);
+    }
+    bubbles.instanceMatrix.needsUpdate = true;
+  }
   const capMaterial = new T.MeshStandardMaterial({
     color: 0xb9c397,
     metalness: 0.8,
@@ -263,6 +408,7 @@ function createHmelBottle(canvas, beer, motionQuery) {
   }
   function render(t) {
     if (disposed || !width || !height) return;
+    const previousY = currentY;
     currentY += (targetY - currentY) * 0.065;
     bottle.rotation.y = currentY;
     bottle.rotation.x += (targetX - bottle.rotation.x) * 0.045;
@@ -270,6 +416,7 @@ function createHmelBottle(canvas, beer, motionQuery) {
     bottle.position.y = drift;
     bottle.rotation.z = -0.18 + (paused() ? 0 : Math.sin(t * 0.00055) * 0.026);
     shadow.material.opacity = 1 - drift * 0.7;
+    updateLiquid(t, currentY - previousY);
     renderer.render(scene, camera);
     canvas.parentElement.classList.add("scene-ready");
   }

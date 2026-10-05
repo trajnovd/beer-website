@@ -1,0 +1,9 @@
+{
+  "dragSlosh": 0.16,
+  "settledSlosh": -0.0000291240678717272,
+  "liquidClockAdvanced": true,
+  "reducedMotionFrozen": true,
+  "finiteSurface": true,
+  "glassTransmission": 1,
+  "errors": []
+}
