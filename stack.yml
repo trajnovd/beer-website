@@ -1,0 +1,9 @@
+version: 1
+ingress:
+  - name: app
+    service: web
+    port: 80
+    primary: true
+    access:
+      # public, not cas: the grading agent and classmates have no CAS login.
+      type: public

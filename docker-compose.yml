@@ -1,0 +1,5 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    # No host port: RepoRun's ingress reaches web:80 (see stack.yml).
