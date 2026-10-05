@@ -409,9 +409,45 @@ const services = [
   },
 ];
 
+/* Initials avatars use the beer colour; a photo at public/assets/team/<id>.jpg replaces them. */
+const team = [
+  {
+    id: "ana-stojanovska",
+    beer: "zrno",
+    name: { mk: "Ана Стојановска", en: "Ana Stojanovska" },
+    role: { mk: "Главен пивар", en: "Head brewer" },
+    bio: {
+      mk: "Рецептите, балансот и сите мали детали што го прават пивото наше.",
+      en: "The recipes, the balance, and all the little details that make the beer ours.",
+    },
+  },
+  {
+    id: "martin-iliev",
+    beer: "opat",
+    name: { mk: "Мартин Илиев", en: "Martin Iliev" },
+    role: { mk: "Пиварница и процес", en: "Brewery & process" },
+    bio: {
+      mk: "Температури, ферментација и трпение. Секој казан е во добри раце.",
+      en: "Temperatures, fermentation, and patience. Every kettle is in good hands.",
+    },
+  },
+  {
+    id: "elena-petrova",
+    beer: "magla",
+    name: { mk: "Елена Петрова", en: "Elena Petrova" },
+    role: { mk: "Дегустации", en: "Tastings & hospitality" },
+    bio: {
+      mk: "Твојот водич низ петте шишиња — и приказните што доаѓаат со нив.",
+      en: "Your guide to the five bottles — and the stories that come with them.",
+    },
+  },
+];
+
+/* Newest first: the home page teases posts[0]. */
 const posts = [
   {
     date: "2026-06-18",
+    image: "beer-stories/kaluger/pour.jpg",
     title: {
       mk: "Зошто Калуѓер завршува суво",
       en: "Why Kaluǵer Finishes Dry",
@@ -423,6 +459,7 @@ const posts = [
   },
   {
     date: "2026-06-10",
+    image: "beer-stories/magla/hero.jpg",
     title: {
       mk: "Магла: квасецот ја прави аромата",
       en: "Magla: Yeast Makes the Aroma",
@@ -434,6 +471,7 @@ const posts = [
   },
   {
     date: "2026-05-28",
+    image: "brand/bottle-lineup-ai.jpg",
     title: {
       mk: "Пет шишиња, една дегустациска линија",
       en: "Five Bottles, One Tasting Line",
@@ -606,6 +644,7 @@ if (typeof module !== "undefined")
     SOCIAL_LINKS,
     beers,
     services,
+    team,
     posts,
     faqs,
     state,

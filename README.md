@@ -23,7 +23,7 @@ The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google
 
 ## Source
 
-- `data.js`: original bilingual recipes, experiences, articles, and FAQs; brewing calculations
+- `data.js`: the booking-form key and social links, then bilingual recipes, experiences, team, articles, and FAQs; brewing calculations
 - `templates.js`: bilingual HTML templates, used only by the build
 - `styles.css`: responsive layouts, both themes, transitions, reduced-motion support
 - `app.js`: themes, navigation, brewing controls, request preparation, and animation lifecycle
@@ -35,6 +35,10 @@ The site uses vanilla JavaScript, locally vendored Three.js and GSAP, and Google
 The cookie notice is in every page's HTML; accepting it sets one `hmel-consent` cookie (1 year), and a head script hides the notice when that cookie exists. Preferences are stored locally on the visitor’s device. Themes initially follow the system setting. Motion follows the system reduced-motion preference, with a separate footer pause control. WebGL failures retain a photographic fallback; scenes stop rendering when outside the viewport or when the tab is hidden.
 
 The brewery and its contact details are fictional.
+
+## Add team photos
+
+Each team card shows initials on a beer colour until a photo exists. Save a portrait (4:5, about 800×1000) as `public/assets/team/<id>.jpg`, using the `id` from `team` in `data.js` (for example `ana-stojanovska.jpg`), then run `npm run build`. The photo replaces the avatar; no code changes.
 
 ## Connect the booking form
 

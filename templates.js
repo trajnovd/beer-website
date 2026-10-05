@@ -1,4 +1,6 @@
 /* Page templates, rendered at build time into one static file per page and language. */
+const fs = require("fs");
+const path = require("path");
 const D = require("./data.js");
 const words = (mk, en, lang) => (lang === "mk" ? mk : en);
 const icons = {
@@ -28,6 +30,12 @@ function renderPage(page = "home", lang = "mk", slug = "") {
   ];
   const link = (url, label, cls = "button") =>
     `<a class="${cls}" href="${href(url)}"><span>${label}</span>${icons.arrow}</a>`;
+  const postDate = (post) =>
+    new Intl.DateTimeFormat(lang === "mk" ? "mk-MK" : "en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(post.date + "T12:00:00"));
   const label = (number, text) =>
     `<p class="eyebrow"><span class="tiny-dot"></span>${number} / ${text}</p>`;
   const image = (file, alt, cls = "", lazy = true) =>
@@ -47,12 +55,12 @@ function renderPage(page = "home", lang = "mk", slug = "") {
       )
       .join(
         "",
-      )}</div></div><section id="collection" class="section collection-section"><div class="section-heading"><div>${label("01", w("Колекцијата", "The collection"))}<h2 class="display reveal">${w("ПЕТ ПИВА.<br>БЕЗ КОМПРОМИС.", "FIVE BEERS.<br>NO HALF MEASURES.")}</h2></div><div class="heading-aside"><p>${w("Светло, магливо, златно или темно.<br>Пронајди го твојот карактер.", "Crisp, cloudy, golden or dark.<br>Find your kind of character.")}</p>${link("beers.html", w("Сите пет пива", "Meet all five"), "text-link")}</div></div><div class="featured-grid">${D.beers
+      )}</div></div><nav class="range-strip" aria-label="${w("Пивата, од светло до темно", "The beers, pale to dark")}">${D.beers.map((x) => `<a href="${href("pivo/" + x.slug + ".html")}" style="--beer:${x.color}"${x.srm > 10 ? ' class="is-dark"' : ""}><span>SRM ${x.srm}</span><strong>${x.name[lang]}</strong><small>${x.style[lang]} · ${x.abv}</small></a>`).join("")}</nav><section id="collection" class="section collection-section"><div class="section-heading"><div>${label("01", w("Колекцијата", "The collection"))}<h2 class="display reveal">${w("ПЕТ ПИВА.<br>БЕЗ КОМПРОМИС.", "FIVE BEERS.<br>NO HALF MEASURES.")}</h2></div><div class="heading-aside"><p>${w("Светло, магливо, златно или темно.<br>Пронајди го твојот карактер.", "Crisp, cloudy, golden or dark.<br>Find your kind of character.")}</p>${link("beers.html", w("Сите пет пива", "Meet all five"), "text-link")}</div></div><div class="featured-grid">${D.beers
       .filter((_, i) => [0, 1, 4].includes(i))
       .map((x) => card(x, D.beers.indexOf(x)))
       .join(
         "",
-      )}</div></section><section class="manifesto section"><div class="manifesto-photo reveal">${image("process/hops.jpg", w("Хмел во процесот на варење", "Hops in the brewing process"))}<span class="photo-caption">${w("ТУКА ПОЧНУВА КАРАКТЕРОТ.", "THIS IS WHERE CHARACTER BEGINS.")}</span></div><div class="manifesto-copy">${label("02", w("Нашиот начин", "The Hmel way"))}<h2 class="display reveal">${w("МАЛКУ<br>ТВРДОГЛАВИ.<br><em>СО ПРИЧИНА.</em>", "A LITTLE<br>STUBBORN.<br><em>FOR A REASON.</em>")}</h2><p>${w("Веруваме во добри состојки, отворени рецепти и време што не се скратува. Мала пиварница, со голема почит кон секое шише.", "We believe in good ingredients, open recipes, and giving things the time they need. A small brewery with a lot of respect for every bottle.")}</p>${link("brewery.html", w("Нашата приказна", "Our story"), "text-link")}</div></section>${cta()}`;
+      )}</div></section><section class="manifesto section"><div class="manifesto-photo reveal">${image("process/hops.jpg", w("Хмел во процесот на варење", "Hops in the brewing process"))}<span class="photo-caption">${w("ТУКА ПОЧНУВА КАРАКТЕРОТ.", "THIS IS WHERE CHARACTER BEGINS.")}</span></div><div class="manifesto-copy">${label("02", w("Нашиот начин", "The Hmel way"))}<h2 class="display reveal">${w("МАЛКУ<br>ТВРДОГЛАВИ.<br><em>СО ПРИЧИНА.</em>", "A LITTLE<br>STUBBORN.<br><em>FOR A REASON.</em>")}</h2><p>${w("Веруваме во добри состојки, отворени рецепти и време што не се скратува. Мала пиварница, со голема почит кон секое шише.", "We believe in good ingredients, open recipes, and giving things the time they need. A small brewery with a lot of respect for every bottle.")}</p>${link("brewery.html", w("Нашата приказна", "Our story"), "text-link")}</div></section><section class="section journal-teaser"><div class="section-heading"><div>${label("03", w("Од дневникот", "From the journal"))}<h2 class="display reveal">${w("НОВО ОД<br>ПИВАРНИЦАТА.", "FRESH FROM<br>THE BREWERY.")}</h2></div>${link("journal.html", w("Сите приказни", "All stories"), "text-link")}</div><a class="teaser-card reveal" href="${href("journal.html#story-1")}"><div class="teaser-image">${image(D.posts[0].image, D.posts[0].title[lang])}</div><div class="teaser-copy"><p class="eyebrow">${postDate(D.posts[0])}</p><h3>${D.posts[0].title[lang]}</h3><p>${D.posts[0].text[lang]}</p><span class="text-link">${w("Прочитај ја приказната", "Read the story")}${icons.arrow}</span></div></a></section>${cta()}`;
   const intro = (n, kicker, title, desc) =>
     `<section class="page-intro section">${label(n, kicker)}<div class="intro-row"><h1 class="display">${title}</h1><p>${desc}</p></div></section>`;
   if (page === "beers")
@@ -96,36 +104,15 @@ function renderPage(page = "home", lang = "mk", slug = "") {
       )
       .join(
         "",
-      )}</section><section class="section"><div class="section-heading"><div>${label("03", w("Тимот", "Our people"))}<h2 class="display reveal">${w("РАЦЕ ШТО ВАРАТ.<br>ЛУЃЕ ШТО САКААТ.", "HANDS THAT BREW.<br>PEOPLE WHO CARE.")}</h2></div></div><div class="team-grid">${[
-      [
-        w("Ана Стојановска", "Ana Stojanovska"),
-        w("Главен пивар", "Head brewer"),
-        w(
-          "Рецептите, балансот и сите мали детали што го прават пивото наше.",
-          "The recipes, the balance, and all the little details that make the beer ours.",
-        ),
-      ],
-      [
-        w("Мартин Илиев", "Martin Iliev"),
-        w("Пиварница и процес", "Brewery & process"),
-        w(
-          "Температури, ферментација и трпение. Секој казан е во добри раце.",
-          "Temperatures, fermentation, and patience. Every kettle is in good hands.",
-        ),
-      ],
-      [
-        w("Елена Петрова", "Elena Petrova"),
-        w("Дегустации", "Tastings & hospitality"),
-        w(
-          "Твојот водич низ петте шишиња — и приказните што доаѓаат со нив.",
-          "Your guide to the five bottles — and the stories that come with them.",
-        ),
-      ],
-    ]
-      .map(
-        ([name, role, bio], i) =>
-          `<article class="team-card reveal"><div class="team-number">0${i + 1}<span>↗</span></div><p class="eyebrow">${role}</p><h3>${name}</h3><p>${bio}</p></article>`,
-      )
+      )}</section><section class="section"><div class="section-heading"><div>${label("03", w("Тимот", "Our people"))}<h2 class="display reveal">${w("РАЦЕ ШТО ВАРАТ.<br>ЛУЃЕ ШТО САКААТ.", "HANDS THAT BREW.<br>PEOPLE WHO CARE.")}</h2></div></div><div class="team-grid">${D.team
+      .map((m) => {
+        const photo = fs.existsSync(path.join(__dirname, "public/assets/team", m.id + ".jpg")),
+          beer = D.beers.find((x) => x.slug === m.beer);
+        const portrait = photo
+          ? `<div class="team-portrait">${image("team/" + m.id + ".jpg", m.name[lang])}</div>`
+          : `<div class="team-portrait team-avatar${beer.srm > 10 ? " is-dark" : ""}" style="--beer:${beer.color}" aria-hidden="true">${m.name[lang].split(" ").map((part) => part[0]).join("")}</div>`;
+        return `<article class="team-card reveal">${portrait}<p class="eyebrow">${m.role[lang]}</p><h3>${m.name[lang]}</h3><p>${m.bio[lang]}</p></article>`;
+      })
       .join("")}</div></section>${cta()}`;
   if (page === "process")
     content = `${intro("03", w("Од зрно до чаша", "From grain to glass"), w("ВРЕДИ<br><em>ДА СЕ ЧЕКА.</em>", "WORTH<br><em>THE WAIT.</em>"), w("Пет чекори. Без кратенки. Следи го патувањето на Зрно, нашиот пале лагер, од првото мелење до ладната чаша.", "Five stages. No shortcuts. Follow Zrno, our pale lager, from the first milling to the cold glass."))}<section class="section process-experience"><div class="brew-readout"><div class="readout-top"><span>${w("ЛИСТ ЗА ВАРЕЊЕ", "BREW SHEET")}</span><span>01 / ZRNO</span></div><div class="readout-visual"><div class="sight-glass"><div class="liquid"><div class="liquid-surface"></div></div><div class="glass-grid"></div></div><div class="readout-scale"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div><div class="readout-caption"><span class="readout-stage">01</span><h2 class="readout-name">${D.beers[0].brewing[0].title[lang]}</h2></div></div><div class="readout-metrics"><div><span>${w("ТЕМПЕРАТУРА", "TEMPERATURE")}</span><strong data-reading="temp">18°C</strong></div><div><span>${w("ГУСТИНА", "GRAVITY")}</span><strong data-reading="gravity">—</strong></div><div><span>${w("ВРЕМЕ", "TIME")}</span><strong data-reading="clock">−00:20</strong></div></div><p class="readout-detail">${D.beers[0].malt}</p><small>${w("Илустративен приказ според рецептот", "Illustrative visualization based on the recipe")}</small></div><div class="process-story">${D.beers[0].brewing.map((step, i) => `<article class="process-chapter" data-stage="${i}"><span class="chapter-number">0${i + 1}</span><h2>${step.title[lang]}</h2><p>${step.body[lang]}</p><div class="chapter-image reveal">${image(step.img.replace("public/assets/", ""), step.title[lang])}</div></article>`).join("")}</div></section><section class="recipe-callout section">${label("05", w("Љубопитен за повеќе?", "Curious for more?"))}<h2 class="display">${w("ПЕТ ПИВА.<br>ПЕТ ПАТУВАЊА.", "FIVE BEERS.<br>FIVE JOURNEYS.")}</h2><p>${w("Секое пиво има свој слад, свој квасец и свое време. Истражи ги рецептите.", "Every beer has its own malt, its own yeast, its own rhythm. Explore the recipes.")}</p>${link("beers.html", w("Откриј ги рецептите", "Explore the recipes"), "button button-accent")}</section>`;
@@ -151,7 +138,7 @@ function renderPage(page = "home", lang = "mk", slug = "") {
       )}</noscript></section><a class="next-beer section" href="${next.slug}.html"><div>${label("0" + (((idx + 1) % 5) + 1), w("Следниот карактер", "The next character"))}<h2 class="display">${next.name[lang]}</h2><p>${next.style[lang]} · ${next.abv} ABV</p></div><span>${icons.arrow}</span></a>`;
   }
   if (page === "journal")
-    content = `${intro("04", w("Белешки од пиварницата", "Notes from the brewery"), w("МАЛИ ПРИКАЗНИ.<br><em>ДОЛГ ЗАВРШЕТОК.</em>", "SMALL STORIES.<br><em>LONG FINISH.</em>"), w("За вкусот, процесот и сè што го прави едно пиво вредно за разговор.", "On flavor, process, and everything that makes a beer worth talking about."))}<section class="section journal-list">${D.posts.map((post, i) => `<article class="journal-article reveal" id="story-${i + 1}"><div class="journal-image">${image(["beer-stories/kaluger/pour.jpg", "beer-stories/magla/hero.jpg", "brand/bottle-lineup-ai.jpg"][i], post.title[lang])}</div><div class="journal-copy"><p class="eyebrow">0${i + 1} / ${new Intl.DateTimeFormat(lang === "mk" ? "mk-MK" : "en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date(post.date + "T12:00:00"))}</p><h2>${post.title[lang]}</h2><p>${post.text[lang]}</p><details><summary>${w("Прочитај ја приказната", "Read the story")} <span>+</span></summary><div><p>${[w("Калуѓер користи пилснер слад и белгиски канди шеќер. Шеќерот ја зголемува јачината без да го отежне телото. Белгискиот квасец носи овошје и зачин, додека Styrian Goldings и Saaz го балансираат завршетокот со 30 IBU.", "Kaluǵer uses pilsner malt and Belgian candi sugar. The sugar lifts the strength without weighing down the body. Belgian yeast brings fruit and spice, while Styrian Goldings and Saaz balance the finish with 30 IBU."), w("Магла почнува со висок удел пченичен слад. Топлата ферментација со вајцен квасец ги создава препознатливите ароми на банана и каранфилче. Само 12 IBU од Tettnang му оставаат простор на квасецот да ја раскаже приказната.", "Magla begins with a high proportion of wheat malt. Warm fermentation with weizen yeast creates its recognizable banana and clove aromas. Just 12 IBU of Tettnang gives the yeast room to tell the story."), w("Почни со свежото Зрно, па продолжи со меката Магла. Калуѓер носи златен, сув и зачински карактер, Опат додава темно овошје и карамел, а Корен завршува со печен слад. Ова не е скала на горчина: секое шише отвора различен дел од колекцијата.", "Start with crisp Zrno, then move to soft Magla. Kaluǵer brings a golden, dry, spicy character, Opat adds dark fruit and caramel, and Koren finishes with roasted malt. This is not a ladder of bitterness: each bottle opens up a different part of the collection.")][i]}</p>${link(i === 2 ? "visit.html" : "pivo/" + ["kaluger", "magla"][i] + ".html", i === 2 ? w("Запознај ја дегустацијата", "Explore the tasting") : w("Запознај го пивото", "Meet the beer"), "text-link")}</div></details></div></article>`).join("")}</section>${cta()}`;
+    content = `${intro("04", w("Белешки од пиварницата", "Notes from the brewery"), w("МАЛИ ПРИКАЗНИ.<br><em>ДОЛГ ЗАВРШЕТОК.</em>", "SMALL STORIES.<br><em>LONG FINISH.</em>"), w("За вкусот, процесот и сè што го прави едно пиво вредно за разговор.", "On flavor, process, and everything that makes a beer worth talking about."))}<section class="section journal-list">${D.posts.map((post, i) => `<article class="journal-article reveal" id="story-${i + 1}"><div class="journal-image">${image(post.image, post.title[lang])}</div><div class="journal-copy"><p class="eyebrow">0${i + 1} / ${postDate(post)}</p><h2>${post.title[lang]}</h2><p>${post.text[lang]}</p><details><summary>${w("Прочитај ја приказната", "Read the story")} <span>+</span></summary><div><p>${[w("Калуѓер користи пилснер слад и белгиски канди шеќер. Шеќерот ја зголемува јачината без да го отежне телото. Белгискиот квасец носи овошје и зачин, додека Styrian Goldings и Saaz го балансираат завршетокот со 30 IBU.", "Kaluǵer uses pilsner malt and Belgian candi sugar. The sugar lifts the strength without weighing down the body. Belgian yeast brings fruit and spice, while Styrian Goldings and Saaz balance the finish with 30 IBU."), w("Магла почнува со висок удел пченичен слад. Топлата ферментација со вајцен квасец ги создава препознатливите ароми на банана и каранфилче. Само 12 IBU од Tettnang му оставаат простор на квасецот да ја раскаже приказната.", "Magla begins with a high proportion of wheat malt. Warm fermentation with weizen yeast creates its recognizable banana and clove aromas. Just 12 IBU of Tettnang gives the yeast room to tell the story."), w("Почни со свежото Зрно, па продолжи со меката Магла. Калуѓер носи златен, сув и зачински карактер, Опат додава темно овошје и карамел, а Корен завршува со печен слад. Ова не е скала на горчина: секое шише отвора различен дел од колекцијата.", "Start with crisp Zrno, then move to soft Magla. Kaluǵer brings a golden, dry, spicy character, Opat adds dark fruit and caramel, and Koren finishes with roasted malt. This is not a ladder of bitterness: each bottle opens up a different part of the collection.")][i]}</p>${link(i === 2 ? "visit.html" : "pivo/" + ["kaluger", "magla"][i] + ".html", i === 2 ? w("Запознај ја дегустацијата", "Explore the tasting") : w("Запознај го пивото", "Meet the beer"), "text-link")}</div></details></div></article>`).join("")}</section>${cta()}`;
   const formKey = D.WEB3FORMS_ACCESS_KEY;
   // The map iframe has tabindex=-1: no focus ring can be shown inside OSM's cross-origin
   // frame, so the "larger map" link under it is the keyboard route.
